@@ -1,3 +1,7 @@
+from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
+
+db = SQLAlchemy()
 roles_users = db.Table('roles_users',
                        db.Column('user_id', db.Integer(),
                                  db.ForeignKey('user.id')),
@@ -5,7 +9,7 @@ roles_users = db.Table('roles_users',
                                  db.ForeignKey('role.id')))
 
 
-class User(db.Model, UserMixin):
+class User(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     username = db.Column(db.String, unique=False)
@@ -19,10 +23,10 @@ class User(db.Model, UserMixin):
     # roles = db.relationship('Role', secondary=roles_users,
     #                         backref=db.backref('users', lazy='dynamic'))
     role = db.relationship('Role')
-    products_created = db.relationship('Products', backref='creater', lazy='dynamic')
-    categorys = db.relationship('Category', backref='creater', lazy='dynamic')
+    # products_created = db.relationship('Products', backref='creater', lazy='dynamic')
+    # products_created = db.relationship('Category', backref='creater', lazy='dynamic')
 
-class Role(db.Model, RoleMixin):
+class Role(db.Model):
     __tablename__ = 'role'
     id = db.Column(db.String, primary_key=True)
     name = db.Column(db.String(80), unique=True)
@@ -34,11 +38,11 @@ class Products(db.Model):
     description = db.Column(db.Text, nullable=True)
     price = db.Column(db.Float, nullable=False)
     quantity = db.Column(db.Integer)
-    category_id = db.Column(db.Integer, db.ForeignKey(
-        'category.id'), nullable=False)
+    # category_id = db.Column(db.Integer, db.ForeignKey(
+    #     'category.id'), nullable=False)
     image = db.Column(db.String(255), nullable=True)
-    creater_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    is_approved = db.Column(db.Boolean(), default=False)
+    # creater_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    is_approved = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
         return f'<Products {self.name}>'
@@ -52,8 +56,8 @@ class Category(db.Model):
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=True)
     image = db.Column(db.String(255), nullable=True)
-    products = db.relationship('Products', backref='category', lazy='dynamic')
-    creater_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    # products = db.relationship('Products', backref='category', lazy='dynamic')
+    # creater_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __repr__(self):
         return f'<Category {self.name}>'
@@ -63,24 +67,24 @@ class Category(db.Model):
 
 class CartItem(db.Model):
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     product_id = db.Column(db.Integer, db.ForeignKey(
         'products.id'), nullable=False)
     quantity = db.Column(db.Integer, nullable=False, default=1)
     product = db.relationship('Products', backref='cart_items')
-    user = db.relationship('Users', backref='cart_items')
+    user = db.relationship('User', backref='cart_items')
 
 
 class Orders(db.Model):
     __tablename__ = 'orders'
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     order_date = db.Column(db.DateTime, default=datetime.utcnow)
     total_amount = db.Column(db.Float, nullable=False)
     status = db.Column(db.Boolean, default=False)
     delivery_address = db.Column(db.Text, nullable=False)
 
-    user = db.relationship('Users', backref='orders')
+    user = db.relationship('User', backref='orders')
     def __repr__(self):
         return f'<Orders {self.id}>'
 
