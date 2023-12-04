@@ -8,7 +8,7 @@ class Config(object):
     # WTF_CSRF_ENABLED = False
     # SECURITY_TOKEN_AUTHENTICATION_HEADER = 'Authentication-Token'
 
-class DevelopmentConfig(Config):
+class DevelopmentConfig(Config): 
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = 'sqlite:///dev.db'
 
