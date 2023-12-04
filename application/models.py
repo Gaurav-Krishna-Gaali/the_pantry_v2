@@ -1,15 +1,22 @@
 from flask_sqlalchemy import SQLAlchemy
+from flask_security import UserMixin, RoleMixin
 from datetime import datetime
 
 db = SQLAlchemy()
-roles_users = db.Table('roles_users',
-                       db.Column('user_id', db.Integer(),
-                                 db.ForeignKey('user.id')),
-                       db.Column('role_id', db.Integer(),
-                                 db.ForeignKey('role.id')))
+# roles_users = db.Table('roles_users',
+#                        db.Column('user_id', db.Integer(),
+#                                  db.ForeignKey('user.id')),
+#                        db.Column('role_id', db.Integer(),
+#                                  db.ForeignKey('role.id')))
+
+class RolesUsers(db.Model):
+    __tablename__ = 'roles_users'
+    id = db.Column(db.Integer(), primary_key=True)
+    user_id = db.Column('user_id', db.Integer(), db.ForeignKey('user.id'))
+    role_id = db.Column('role_id', db.Integer(), db.ForeignKey('role.id'))
 
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     __tablename__ = 'user'
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     username = db.Column(db.String, unique=False)
@@ -19,16 +26,15 @@ class User(db.Model):
     wallet = db.Column(db.Integer, default= 1000)
     date_added = db.Column(db.DateTime, default=datetime.utcnow)
     fs_uniquifier = db.Column(db.String(255), unique=True, nullable=False)
-    role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
-    # roles = db.relationship('Role', secondary=roles_users,
-    #                         backref=db.backref('users', lazy='dynamic'))
-    role = db.relationship('Role')
+    # role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
+    roles = db.relationship('Role', secondary='roles_users',
+                            backref=db.backref('users', lazy='dynamic'))
     # products_created = db.relationship('Products', backref='creater', lazy='dynamic')
     # products_created = db.relationship('Category', backref='creater', lazy='dynamic')
 
-class Role(db.Model):
+class Role(db.Model, RoleMixin):
     __tablename__ = 'role'
-    id = db.Column(db.String, primary_key=True)
+    id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(80), unique=True)
     description = db.Column(db.String(255))
 
