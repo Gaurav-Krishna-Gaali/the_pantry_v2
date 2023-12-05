@@ -1,6 +1,8 @@
-from main import app, datastore
+from main import app
+from application.sec import datastore
 from application.models import db, Role
 from flask_security import hash_password
+from werkzeug.security import generate_password_hash
 
 
 with app.app_context():
@@ -12,20 +14,20 @@ with app.app_context():
     if not datastore.find_user(email="admin@email.com"):
         datastore.create_user(
             email="admin@email.com",
-            password=hash_password("admin123"),
+            password=generate_password_hash("admin123"),
             roles=["admin"],
         )
     if not datastore.find_user(email="storemanager1@email.com"):
         datastore.create_user(
             email="storemanager1@email.com",
-            password=hash_password("storemanager123"),
+            password=generate_password_hash("storemanager123"),
             roles=["storemanager"],
             active=False
         )
     if not datastore.find_user(email="customer1@email.com"):
         datastore.create_user(
             email="customer1@email.com",
-            password=hash_password("customer123"),
+            password=generate_password_hash("customer123"),
             roles=["customer"],
         )
 
