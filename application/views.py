@@ -3,6 +3,7 @@ from flask_security import auth_required, roles_required
 from .models import User, db
 from .sec import datastore
 from werkzeug.security import check_password_hash
+from flask_restful import marshal, fields
 
 @app.get('/')
 def home():
@@ -42,3 +43,18 @@ def Userlogin():
     
     else:
         return jsonify({'message': 'Invalid credentials'}), 400
+
+customer_fields = {
+    "id": fields.Integer,
+    "email": fields.String,
+    "active": fields.Boolean
+}
+
+@app.get('/customers')
+@auth_required("token")
+@roles_required("admin")
+def all_customers():
+    Allcustomers = User.query.all()
+    if len(Allcustomers) == 0:
+        return jsonify({'message': 'No customers found'}), 404
+    return jsonify(marshal(Allcustomers, customer_fields))

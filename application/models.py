@@ -47,7 +47,7 @@ class Products(db.Model):
     # category_id = db.Column(db.Integer, db.ForeignKey(
     #     'category.id'), nullable=False)
     image = db.Column(db.String(255), nullable=True)
-    # creater_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    creater_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     is_approved = db.Column(db.Boolean, default=False)
 
     def __repr__(self):

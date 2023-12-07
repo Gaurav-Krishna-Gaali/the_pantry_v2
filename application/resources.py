@@ -1,6 +1,7 @@
 from flask_restful import Resource, Api, reqparse, marshal_with, fields
 from .models import Products, Category, db
 from flask import jsonify 
+from flask_security import auth_required, roles_required, current_user
 
 api = Api(prefix='/api')
 
@@ -19,17 +20,21 @@ products_fields = {
 
 class StoreProducts(Resource):
     @marshal_with(products_fields)
+    @auth_required("token")
     def get(self):
         all_products = Products.query.all()
         if len(all_products) < 0:
             return {'message': 'No products found'}, 404
         return all_products, 200
     
+    @auth_required("token")
+    @roles_required("storemanager")
     def post(self):
         args = parser.parse_args()
-        products = Products(**args)
+        products = Products(name= args.get('name'),quantity= args.get('quantity'),price= args.get('price'), creater_id= current_user.id)
+        print(products) 
         db.session.add(products)
         db.session.commit()
-        pass
+        return {"message": "Study Resource Created"}
 
 api.add_resource(StoreProducts, '/products')
