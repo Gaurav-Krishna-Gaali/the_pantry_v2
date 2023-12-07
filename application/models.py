@@ -29,7 +29,7 @@ class User(db.Model, UserMixin):
     # role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
     roles = db.relationship('Role', secondary='roles_users',
                             backref=db.backref('users', lazy='dynamic'))
-    # products_created = db.relationship('Products', backref='creater', lazy='dynamic')
+    products_created = db.relationship('Products', backref='creater', lazy='dynamic')
     # products_created = db.relationship('Category', backref='creater', lazy='dynamic')
 
 class Role(db.Model, RoleMixin):

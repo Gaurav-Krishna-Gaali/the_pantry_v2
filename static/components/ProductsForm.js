@@ -31,6 +31,9 @@ export default {
             const data = await res.json()
             if(res.ok){
                 alert(data.message)
+            }else
+            {
+                alert(data.message)
             }
        
         }
