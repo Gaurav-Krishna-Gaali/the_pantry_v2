@@ -6,11 +6,18 @@ from sqlalchemy import or_
 
 api = Api(prefix='/api')
 
+# Store Products parsers
 parser = reqparse.RequestParser()
 parser.add_argument('name' , type=str, help='name must be an str')
 parser.add_argument('quantity' , type=int, help='quantity must be an integer')
 parser.add_argument('price', type=float, help='price must be a float')
 # parser.add_argument('total_amount', type=float, help='total_amount must be a float')
+
+# Store Categories parsers
+parser = reqparse.RequestParser()
+parser.add_argument('name', type=str, help='name must be a string')
+parser.add_argument('description', type=str, help='description must be a string')
+parser.add_argument('image', type=str, help='image must be a string')
 
 class Creator(fields.Raw):
     def format(self, user):
@@ -33,7 +40,8 @@ class StoreProducts(Resource):
         if  "storemanager"  in current_user.roles:
             display_product = Products.query.all()
         else:
-            display_product = Products.query.all(or_(Products.is_approved == True , Products.creator == current_user)).all()
+            display_product = Products.query.all()
+            # display_product = Products.query.all(or_(Products.is_approved == True , Products.creator == current_user)).all()
             
         print(f"products are {display_product}")
         if len(display_product) < 0:
@@ -50,4 +58,34 @@ class StoreProducts(Resource):
         db.session.commit()
         return {"message": "Study Resource Created"}
 
+class StoreCategory(Resource):
+    category_fields = {
+        'id': fields.Integer,
+        'name': fields.String,
+        'description': fields.String,
+        'image': fields.String,
+    }
+
+    @marshal_with(category_fields)
+    @auth_required("token")
+    def get(self):
+        categories = Category.query.all()
+        if not categories:
+            return {'message': 'No categories found'}, 404
+        return categories, 200
+    
+    @auth_required("token")
+    @roles_required("storemanager")
+    def post(self):
+        args = parser.parse_args()
+        category = Category(
+            name=args.get('name'),
+            description=args.get('description'),
+            image=args.get('image')
+        )
+        db.session.add(category)
+        db.session.commit()
+        return {"message": "Category created"}
+
+api.add_resource(StoreCategory, '/categories')
 api.add_resource(StoreProducts, '/products')

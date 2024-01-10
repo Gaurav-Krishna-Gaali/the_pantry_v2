@@ -18,6 +18,9 @@ export default {
         <li class="nav-item" v-if="role == 'storemanager'">
           <router-link class="nav-link " to="/add-products"  >Add products</router-link>
         </li>
+        <li class="nav-item" v-if="role == 'storemanager'">
+          <router-link class="nav-link " to="/add-categories"  >Add categories</router-link>
+        </li>
         <li class="nav-item" v-if="is_login">
           <button class="nav-link" @click="logout" href="#">Logout</button>
         </li>

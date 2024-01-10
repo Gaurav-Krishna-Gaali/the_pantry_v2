@@ -2,6 +2,7 @@ import Home from "./components/Home.js"
 import Login from "./components/Login.js"
 import Customers from "./components/Customers.js"
 import ProductsForm from "./components/ProductsForm.js"
+import CategoriesForm from "./components/CategoriesForm.js"
 
 const routes = [
     {
@@ -15,6 +16,9 @@ const routes = [
     },
     {
         path: '/add-products', component: ProductsForm
+    },
+    {
+        path: '/add-categories', component: CategoriesForm
     }
 ]
 
