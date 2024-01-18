@@ -8,13 +8,13 @@ router.beforeEach((to, from, next) => {
     } else {
         next()
     }
-}) 
+})
 new Vue({
     el: '#app',
     template: `<div>
     <Navbar :key="has_changed"/>
-    <router-view class="m-3"/> </div>`,
-    router, 
+    <router-view /> </div>`,
+    router,
     components: {
         Navbar
     },

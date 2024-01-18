@@ -7,10 +7,10 @@ from sqlalchemy import or_
 api = Api(prefix='/api')
 
 # Store Products parsers
-parser = reqparse.RequestParser()
-parser.add_argument('name' , type=str, help='name must be an str')
-parser.add_argument('quantity' , type=int, help='quantity must be an integer')
-parser.add_argument('price', type=float, help='price must be a float')
+prodparser = reqparse.RequestParser()
+prodparser.add_argument('name' , type=str, help='name must be an str')
+prodparser.add_argument('quantity' , type=int, help='quantity must be an integer')
+prodparser.add_argument('price', type=float, help='price must be a float')
 # parser.add_argument('total_amount', type=float, help='total_amount must be a float')
 
 # Store Categories parsers
@@ -51,7 +51,7 @@ class StoreProducts(Resource):
     @auth_required("token")
     @roles_required("storemanager")
     def post(self):
-        args = parser.parse_args()
+        args = prodparser.parse_args()
         products = Products(name= args.get('name'),quantity= args.get('quantity'),price= args.get('price'), creater_id= current_user.id)
         print(products) 
         db.session.add(products)

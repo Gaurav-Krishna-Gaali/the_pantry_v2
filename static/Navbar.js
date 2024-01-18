@@ -1,51 +1,180 @@
 export default {
-    template: `<div> 
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    template: `
+    <div > 
+    <nav class="navbar navbar-expand-lg  sticky-top  bg-white data-bs-theme='light'"
+    style="border-bottom: 1px solid grey ; padding: 10px; padding-bottom: 20px;">
+    
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">MAD-2</a>
+  <a class="navbar-brand" href="/">
+            <img src="/static/logo.png" alt="logo" class="border-5" height="30 " style="border:grey;">
+        </a>
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+    
     <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <router-link class="nav-link active" aria-current="page" to="/">Home</router-link>
-        </li>
-        <li class="nav-item" v-if="role == 'admin'">
+    <ul class="navbar-nav me-auto justify-content-between w-100">
+
+    <li class="nav-item" v-if="role == 'admin'">
           <router-link class="nav-link" to="/customers">Customers</router-link>
         </li>
         
-        <li class="nav-item" v-if="role == 'storemanager'">
+        <li class="nav-item" v-else-if="role == 'storemanager'">
           <router-link class="nav-link " to="/add-products"  >Add products</router-link>
-        </li>
-        <li class="nav-item" v-if="role == 'storemanager'">
           <router-link class="nav-link " to="/add-categories"  >Add categories</router-link>
         </li>
-        <li class="nav-item" v-if="is_login">
-          <button class="nav-link" @click="logout" href="#">Logout</button>
-        </li>
+       
+        <li class="nav-item" v-else-if="role == 'storemanager'">
+      </li>
+        
+    
+    <form class=" d-flex w-100" action="/search" method="POST">
+                    <input class="form-control me-sm-2" type="text" name="query" placeholder="Search for products or categories" >
+                    <button class="btn btn-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+
+
+    <li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
+    aria-haspopup="true" aria-expanded="false">Profile 
+    </a>
+    <div class="dropdown-menu">
+                        <div v-if="is_login">
+                        <a  class="dropdown-item nav-link" >My Wallet :  ₹ 1000</a >
+                        <a class="dropdown-item nav-link" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button"
+                            aria-controls="offcanvasExample">
+                            My Orders
+                        </a >
+                        <button class="dropdown-item" @click="logout" >Logout</button>
+                        <button class="dropdown-item" @click="logout" >Profile ({{role}})</button>
+                        </div>
+                        <div v-if="!is_login">
+                        <a class="dropdown-item" href="/login">Login</a>
+                        <a class="dropdown-item" href="/register">Register</a>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="/admin">Admin</a>
+                    </div>
+        </li>       
       </ul>
       
     </div>
   </div>
+  
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample"
+            aria-labelledby="offcanvasExampleLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasExampleLabel">My Orders</h5>
+                <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
+                    aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                
+            </div>
+        </div>
 </nav>
-    </div>`,
-    data(){
-      return {
-          role: localStorage.getItem('role'),
-          is_login: localStorage.getItem('auth-token')
-      }
-    }, 
+
+</div>
+
+<div class="modal Zip" id="myModal" tabindex="-1" aria-labelledby="myModalLabel1" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    Your Cart items
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"></span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Product</th>
+                            <th scope="col">Title</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col"></th>
+                            <th scope="col">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in cart_products %}
+                        <tr class="table-light">
+                            <th scope="row">
+                                {% if categories_flag %}
+                                <img src="/{{ product.product_image }}" class="card-img-top" alt="Product Image">
+                            </th>
+                            {% else %}
+                            <img src="{{ product.product_image }}" class="card-img-top" alt="Product Image"></th>
+                            {% endif %}
+                            <td>
+                                <h5 class="card-title">{{ product.product_name }}</h5>
+                            </td>
+                            <td>
+                                <p class="" value="{{ product.quantity }}" style="width: 50%">{{ product.quantity }}</p>
+                                <!-- {{ product.quantity }} -->
+                            </td>
+                            <td>
+                                <form method="POST"
+                                    action="{{ url_for('remove_from_cart', item_id= product.product_id) }}">
+                                    <button type="submit" class="btn-close bg-red"></button>
+                                </form>
+                            </td>
+                            <td>
+                                <p class="card-text">₹{{ product.subtotal }}</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        <tr class="">
+                            <th scope="row"></th>
+                            <td></td>
+                            <td>Grand Total</td>
+                            <td>
+                                <bold> </bold>
+                            </td>
+                            <td>₹{{products_total}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                <a class="btn btn-success" href="{{ url_for('Checkout') }}">Place Order</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Only working for 965*549 -->
+<!-- My orders tab -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasExampleLabel">My Orders</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        
+    </div>
+</div>
+    `,
+    data() {
+        return {
+            role: localStorage.getItem('role'),
+            is_login: localStorage.getItem('auth-token'),
+        }
+    },
     // computed(){
     //   is_login(){
     //     return localStorage.getItem('auth-token')
     //   }
     // } ,
-    methods:{
-      logout(){
-        localStorage.removeItem('auth-token')
-        localStorage.removeItem('role')
-        this.$router.push({path: '/login'})
-      }
+    methods: {
+        logout() {
+            localStorage.removeItem('auth-token')
+            localStorage.removeItem('role')
+            this.$router.push({ path: '/login' })
+        }
     }
 }

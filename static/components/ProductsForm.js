@@ -7,19 +7,20 @@ export default {
     <button @click="createResource">Create</button>
     </div>`,
 
-    data(){
+    data() {
         return {
             resource: {
                 name: null,
                 quantity: null,
                 price: null
-            }, 
+            },
             token: localStorage.getItem('auth-token')
         }
     },
-    methods:{
-        async createResource(){
-             const res = await fetch('/api/products', {
+    methods: {
+        async createResource() {
+            console.log('this.resource', JSON.stringify(this.resource))
+            const res = await fetch('/api/products', {
                 method: 'POST',
                 headers: {
                     'Authentication-Token': this.token,
@@ -27,15 +28,14 @@ export default {
                 },
                 body: JSON.stringify(this.resource)
             })
-            
+
             const data = await res.json()
-            if(res.ok){
+            if (res.ok) {
                 alert(data.message)
-            }else
-            {
+            } else {
                 alert(data.message)
             }
-       
+
         }
     }
 }

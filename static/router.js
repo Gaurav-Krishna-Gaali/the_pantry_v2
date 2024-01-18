@@ -6,10 +6,10 @@ import CategoriesForm from "./components/CategoriesForm.js"
 
 const routes = [
     {
-        path: '/', component: Home, name : 'Home'
+        path: '/', component: Home, name: 'Home'
     },
     {
-        path: '/login', component: Login, name:'Login'
+        path: '/login', component: Login, name: 'Login'
     },
     {
         path: '/customers', component: Customers
