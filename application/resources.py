@@ -19,6 +19,12 @@ parser.add_argument('name', type=str, help='name must be a string')
 parser.add_argument('description', type=str, help='description must be a string')
 parser.add_argument('image', type=str, help='image must be a string')
 
+# Store Cart parsers
+cart_parser = reqparse.RequestParser()
+cart_parser.add_argument('image', type=str, help='An image prefeably of the product')
+cart_parser.add_argument('title', type=str, help='title must be a string')
+cart_parser.add_argument('quantiy', type=str, help='quantiy must be a string')
+
 class Creator(fields.Raw):
     def format(self, user):
         return user.email
@@ -86,6 +92,25 @@ class StoreCategory(Resource):
         db.session.add(category)
         db.session.commit()
         return {"message": "Category created"}
+    
+
+class CartResource(Resource):
+    cart_fields = {
+        'id': fields.Integer,
+        'image': fields.String,
+        'title': fields.String,
+        'quantiy': fields.Integer,
+    }
+
+    @marshal_with(cart_fields)
+    @auth_required("token")
+    def get(self):
+        return {"cart": self.cart}
+
+    def post(self, item):
+        self.cart.append(item)
+        return {"message": f"{item} added to cart"}
 
 api.add_resource(StoreCategory, '/categories')
 api.add_resource(StoreProducts, '/products')
+api.add_resource(CartResource, '/cart/<int:item>')

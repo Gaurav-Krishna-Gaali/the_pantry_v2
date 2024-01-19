@@ -23,21 +23,24 @@ export default {
         <div class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-3 row-cols-sm-2 row-cols-xl-4 justify-content-center" >
             <div class="col mb-5"  v-for="product in products" >
                 <div class="card h-100" >
+                <img class="card-img-top" alt="avatar2" src="https://subzfresh.com/wp-content/uploads/2022/04/apple_158989157.jpg" />
                     <!-- Product details-->
                     <div class="card-body p-4">
                         <div class="text-center">
-                            <h5 class="fw-bolder">{{ product.name }}</h5>
+                            <h5 class="fw-bolder" v-model="resource.image">{{ product.name }}</h5>
                             ₹{{ product.price }}
                         </div>
                     </div>
                     <!-- Product actions-->
-
+                    
+                    <!-- Out of stock : Product -->
                     <div class="alert alert-dismissible alert-danger" v-if="product.quantity == 0">
-                        <strong>Oh snap!</strong> <a href="#" class="alert-link">We're are out of stock</a> 
+                    <strong>Oh snap!</strong> <a href="#" class="alert-link">We're are out of stock</a> 
                     </div>
                     
-                    <form action="/add" method="post">
-                                <input type="hidden" name="code" value={{product.id}} />
+                    <!-- Add to cart: Product -->
+                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent" v-if="product.quantity != 0" >
+                                <input type="hidden" name="code"  :value="product.id"  />
                                 
                                 <div class="d-flex justify-content-evenly align-items-center">
                                     <span>In Stock:</span>
@@ -45,19 +48,19 @@ export default {
                                 </div>
                                 <div class="d-flex justify-content-evenly align-items-center mb-2">
                                     <span>Quantity</span><span>
-                                        <input type="text" name="quantity" value='1' class="form-control text-center me-3"
-                                            size="2" /></span>
+                                        <input type="text"  name="quantity" placeholder="1" class="form-control text-center me-3"
+                                            size="2" @input="resource.quantity = $event.target.value" /></span>
                                 </div>
                                 <!-- {{form.submit(class="btn btn-outline-secondary")}} -->
                                 <div class="d-flex justify-content-evenly total align-items-center font-weight-bold mt-4">
-                                    <span>Price:</span><span> ₹{{ product.price }}</span>
+                                    <p>Price:</p><p> ₹{{ product.price }}</p>
                                 </div>
                                 <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
                                     <div class="text-center">
-                                        <button type="type" class="btn btn-outline-dark mt-auto">Add to cart</button>
+                                        <button @click="addToCart(product.id)"  type="type" class="btn btn-outline-dark mt-auto">Add to cart</button>
                                     </div>
                                 </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -78,6 +81,11 @@ export default {
             error: null,
             categories: [],
             products: [],
+            cart: [],
+            resource: {
+                product_id: null,
+                quantity: null,
+            },
         }
     },
 
@@ -93,6 +101,31 @@ export default {
                 alert(data.message)
             }
         },
+
+        async addToCart(id) {
+            this.resource.product_id = id
+            if (this.resource.quantity <= 0) {
+                this.resource.quantity = 1
+                return
+            }
+            console.log('this.resource', this.resource)
+            const res = await fetch('/api/cart', {
+                method: 'POST',
+                headers: {
+                    'Authentication-Token': this.token,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(this.resource)
+            })
+
+            const data = await res.json()
+            alert(data.message)
+            if (res.ok) {
+                alert(data.message)
+            } else {
+                alert(data.message)
+            }
+        }
     },
     async mounted() {
         const res = await fetch('/api/products', {
