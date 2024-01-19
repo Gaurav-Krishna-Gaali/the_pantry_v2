@@ -121,9 +121,9 @@ export default {
             const data = await res.json()
             alert(data.message)
             if (res.ok) {
-                alert(data.message)
+                console.log('Added successfully')
             } else {
-                alert(data.message)
+                // alert(data.message)
             }
         }
     },
@@ -154,6 +154,20 @@ export default {
         }
         else {
             alert(categories_data.message)
+        }
+
+        // Cart Items
+        const cart_res = await fetch('/api/cart', {
+            headers: {
+                'Authentication-Token': this.token
+            }
+        })
+        const cart_data = await cart_res.json()
+        if (cart_res.ok) {
+            this.cart = cart_data
+        }
+        else {
+            console.log(cart_data)
         }
     }
 }

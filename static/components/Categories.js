@@ -18,7 +18,6 @@ export default {
 
   methods: {
     async approve(category_id) {
-      console.log(this.token)
       const res = await fetch(`/activate/category/${category_id}`, {
         headers: {
           'Authentication-Token': this.token,

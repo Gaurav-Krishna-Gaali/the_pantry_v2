@@ -55,8 +55,16 @@ export default {
                         </div>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="/admin">Admin</a>
-                    </div>
-        </li>       
+        </div>
+
+       <li><button type="button"
+                        class="btn btn-outline-success d-flex justify-content-center align-items-center"
+                        data-bs-toggle="modal" data-bs-target="#myModal">
+                        <i class="bi-cart-fill me-1"></i>
+                        Cart
+                        <span class="badge bg-success text-white ms-1 rounded-pill">{{ sum_products }}</span></button>
+                </li>
+                </li>  
       </ul>
       
     </div>
@@ -99,44 +107,7 @@ export default {
                             <th scope="col">Total</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        {% for product in cart_products %}
-                        <tr class="table-light">
-                            <th scope="row">
-                                {% if categories_flag %}
-                                <img src="/{{ product.product_image }}" class="card-img-top" alt="Product Image">
-                            </th>
-                            {% else %}
-                            <img src="{{ product.product_image }}" class="card-img-top" alt="Product Image"></th>
-                            {% endif %}
-                            <td>
-                                <h5 class="card-title">{{ product.product_name }}</h5>
-                            </td>
-                            <td>
-                                <p class="" value="{{ product.quantity }}" style="width: 50%">{{ product.quantity }}</p>
-                                <!-- {{ product.quantity }} -->
-                            </td>
-                            <td>
-                                <form method="POST"
-                                    action="{{ url_for('remove_from_cart', item_id= product.product_id) }}">
-                                    <button type="submit" class="btn-close bg-red"></button>
-                                </form>
-                            </td>
-                            <td>
-                                <p class="card-text">₹{{ product.subtotal }}</p>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                        <tr class="">
-                            <th scope="row"></th>
-                            <td></td>
-                            <td>Grand Total</td>
-                            <td>
-                                <bold> </bold>
-                            </td>
-                            <td>₹{{products_total}}</td>
-                        </tr>
-                    </tbody>
+                    
                 </table>
             </div>
             <div class="modal-footer">
