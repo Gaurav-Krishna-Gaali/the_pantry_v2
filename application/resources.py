@@ -96,13 +96,18 @@ class StoreCategory(Resource):
 
 class CartResource(Resource):
     cart_item_fields = {
-    'product_id': fields.String,
-    'quantiy': fields.Integer,
-    }
+                'product': {
+                    'product_id': fields.Integer,
+                    'product_quantity': fields.Integer,
+                    'produt_image': fields.String,
+                    'product_name': fields.String,
+                    'product_price': fields.Integer
+
+                },
+            }
 
     user_fields = {
-    'user_id': fields.Integer(attribute='id'),
-    'cart': fields.List(fields.Nested(cart_item_fields)),
+    'cart': fields.Nested(cart_item_fields),
 }
 
     # @marshal_with(user_fields)
@@ -127,7 +132,6 @@ class CartResource(Resource):
 
         if not cart_items_data:
             return {'message': 'No categories found'}, 404
-    #     user.cart_items = cart_items_data
         return cart_items_data, 200
 
     @auth_required("token")

@@ -1,6 +1,5 @@
 export default {
     template: `
-    <div > 
     <nav class="navbar navbar-expand-lg  sticky-top  bg-white data-bs-theme='light'"
     style="border-bottom: 1px solid grey ; padding: 10px; padding-bottom: 20px;">
     
@@ -77,11 +76,10 @@ export default {
                 <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
                     aria-label="Close"></button>
             </div>
-            <div class="offcanvas-body">
+            <div class="offcanvas-body z-0">
                 
             </div>
         </div>
-</nav>
 
 </div>
 
@@ -112,11 +110,12 @@ export default {
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
-                <a class="btn btn-success" href="{{ url_for('Checkout') }}">Place Order</a>
+                <a class="btn btn-success" href="#">Place Order</a>
             </div>
         </div>
     </div>
-</div>
+</nav>
+
 
 <!-- Only working for 965*549 -->
 <!-- My orders tab -->
