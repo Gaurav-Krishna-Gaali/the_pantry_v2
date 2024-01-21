@@ -1,6 +1,6 @@
 export default {
   template: `<div class="card d-flex flex-row  m-3 p-2 justify-space-between justify-content-between" v-if="role == 'storemanager'||'admin'">Products
-    <h4>Name: {{product.name}}</h4> 
+  <h4>Name: {{product.name}}</h4> 
     <h4>  price: {{product.price}}</h4>
     <h4>  Quantity: {{product.quantity}}</h4>
     <div className="">

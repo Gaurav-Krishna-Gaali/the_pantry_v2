@@ -4,10 +4,9 @@ import Categories from "./Categories.js"
 export default {
     template: `
         <div class="container">
-        <h1>hi</h1>
             <Products v-for = "(product, index) in products" :key="index" :product="product" />
             <Categories v-for = "(category, cindex) in categories" :key="'122'+ cindex" :category="category" />
-              </div>
+        </div>
     `,
     data() {
         return {

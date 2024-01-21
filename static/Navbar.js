@@ -83,6 +83,9 @@ export default {
 
 </div>
 
+
+</nav>
+
 <div class="modal Zip" id="myModal" tabindex="-1" aria-labelledby="myModalLabel1" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -114,8 +117,7 @@ export default {
             </div>
         </div>
     </div>
-</nav>
-
+</div>
 
 <!-- Only working for 965*549 -->
 <!-- My orders tab -->

@@ -14,8 +14,6 @@ export default {
             <AdminHome v-if="userRole === 'admin'"/>
             <CustomerHome v-else-if="userRole === 'customer'"/>
             <StoreManagerHome v-else-if="userRole === 'storemanager'"/>
-            <Products v-for = "(product, index) in products" :key="index" :product="product" />
-            <Categories v-for = "(category, cindex) in categories" :key="'122'+ cindex" :category="category" />
            <Shop  />
               </div>
     `,

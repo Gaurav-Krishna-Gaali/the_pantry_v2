@@ -1,30 +1,37 @@
+import Activation from "./Activation.js"
+import Table from "./Table.js"
+import Customers from "./Customers.js"
+
 export default {
   template: `<div>
-    <h2 class="text-center">Welcome Home,  Admin!</h2>
+    <h2 class="text-center">Welcome Home,  SuperUser!</h2>
     <ul class="nav nav-tabs" role="tablist">
-  <li class="nav-item" role="presentation">
-    <a class="nav-link active" data-bs-toggle="tab" href="#home" aria-selected="true" role="tab">Home</a>
+  <li class="nav-item" role="presentation"  v-if="userRole == 'admin'">
+    <a class="nav-link active" data-bs-toggle="tab" href="#customer" aria-selected="true" role="tab">Customers</a>
   </li>
   <li class="nav-item" role="presentation">
-    <a class="nav-link" data-bs-toggle="tab" href="#profile" aria-selected="false" role="tab" tabindex="-1">Profile</a>
+    <a class="nav-link" data-bs-toggle="tab" href="#category" aria-selected="true" role="tab">Categories</a>
+  </li>
+  <li class="nav-item" role="presentation">
+    <a class="nav-link" data-bs-toggle="tab" href="#product" aria-selected="true" role="tab">Products</a>
+  </li>
+  <li class="nav-item" role="presentation">
+    <a class="nav-link" data-bs-toggle="tab" href="#profile" aria-selected="false" role="tab" tabindex="-1">Activation Requests</a>
   </li>
  
-  <li class="nav-item dropdown">
-    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>
-    <div class="dropdown-menu" style="">
-      <h6 class="dropdown-header">Dropdown header</h6>
-      <a class="dropdown-item" href="#">Action</a>
-      <a class="dropdown-item" href="#">Another action</a>
-      <a class="dropdown-item" href="#">Something else here</a>
-      <div class="dropdown-divider"></div>
-      <a class="dropdown-item" href="#">Separated link</a>
-    </div>
-  </li>
+
 </ul>
 <div id="myTabContent" class="tab-content">
-  <div class="tab-pane fade active show" id="home" role="tabpanel">
-    <p>Raw denim you probably haven't heard of them jean shorts Austin. Nesciunt tofu stumptown aliqua, retro synth master cleanse. Mustache cliche tempor, williamsburg carles vegan helvetica. Reprehenderit butcher retro keffiyeh dreamcatcher synth. Cosby sweater eu banh mi, qui irure terry richardson ex squid. Aliquip placeat salvia cillum iphone. Seitan aliquip quis cardigan american apparel, butcher voluptate nisi qui.</p>
+  <div class="tab-pane fade active show" id="customer" role="tabpanel">
+  <Customers flag="customer_flag" />
   </div>
+  
+  <div class="tab-pane fade" id="category" role="tabpanel">
+    <Table flag="category_flag"/>
+    </div>
+  <div class="tab-pane fade" id="product" role="tabpanel">
+    <Table flag="product_flag"/>
+    </div>
   <div class="tab-pane fade" id="profile" role="tabpanel">
      <Activation/>
     <p>Food truck fixie locavore, accusamus mcsweeney's marfa nulla single-origin coffee squid. Exercitation +1 labore velit, blog sartorial PBR leggings next level wes anderson artisan four loko farm-to-table craft beer twee. Qui photo booth letterpress, commodo enim craft beer mlkshk aliquip jean shorts ullamco ad vinyl cillum PBR. Homo nostrud organic, assumenda labore aesthetic magna delectus mollit.</p>
@@ -46,7 +53,10 @@ export default {
     }
   },
   components: {
-    Products,
-    Categories,
+    Activation,
+    Table,
+    Customers,
+    // Products,
+    // Categories,
   },
 }

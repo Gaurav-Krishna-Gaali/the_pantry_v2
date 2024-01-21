@@ -1,6 +1,6 @@
 from flask import current_app as app, jsonify, request, render_template
 from flask_security import auth_required, roles_required
-from .models import User, db, Products, Category
+from .models import User, db, Products, Category, RolesUsers, Role
 from .sec import datastore
 from werkzeug.security import check_password_hash
 from flask_restful import marshal, fields
@@ -67,21 +67,61 @@ def Userlogin():
     
     else:
         return jsonify({'message': 'Invalid credentials'}), 400
+    
+
+@app.put('/update_product/<int:product_id>')
+@auth_required("token")
+@roles_required("admin", "storemanager")
+def update_product(product_id):
+    product = Products.query.get_or_404(product_id)
+
+    data = request.get_json()
+    product.name = data.get('name', product.name)
+    product.quantity = data.get('quantity', product.quantity)
+    product.price = data.get('price', product.price)
+    product.image = data.get('image', product.image)
+
+    # Commit changes to the database
+    db.session.commit()
+
+    return jsonify({'message': 'Product updated successfully'})
+
 
 customer_fields = {
     "id": fields.Integer,
+    "username": fields.String,
+    "wallet": fields.Integer,
     "email": fields.String,
-    "active": fields.Boolean
+    "active": fields.Boolean,
+    "role": fields.String,
+
 }
 
 @app.get('/customers')
 @auth_required("token")
 @roles_required("admin")
 def all_customers():
-    Allcustomers = User.query.all()
-    if len(Allcustomers) == 0:
+    query_result = db.session.query(User, RolesUsers, Role) \
+        .join(RolesUsers, User.id == RolesUsers.user_id) \
+        .join(Role, RolesUsers.role_id == Role.id) \
+        .order_by(User.date_added.desc()).all()
+
+    formatted_results = []
+    for user, roles_users, role in query_result:
+        user_info = {
+            'id': user.id,
+            'username': user.username,
+            'email': user.email,
+            'wallet': user.wallet,
+            'active': user.active,
+            'roles': [r.name for r in user.roles],  
+        }
+        formatted_results.append(user_info)
+    
+    if len(formatted_results) == 0:
         return jsonify({'message': 'No customers found'}), 404
-    return jsonify(marshal(Allcustomers, customer_fields))
+
+    return jsonify(formatted_results)
 
 
 @app.get('/allproducts')
