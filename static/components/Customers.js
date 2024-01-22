@@ -36,7 +36,7 @@ export default {
                                 <i class="bi bi-check2-circle"></i>
                                 </button>
 
-                                <button @click="deleteUser(customer)" class="btn btn-danger me-1" >
+                                <button @click="deleteUser(customer.id)" class="btn btn-danger me-1" >
                                 <i class="bi bi-trash3"></i>
                                 </button>
 
@@ -76,15 +76,17 @@ export default {
         alert(data.message)
       }
     },
-    async deleteUser(customer) {
-      const res = await fetch(`/delete/user/${customer.id}`, {
+    async deleteUser(customer_id) {
+      const res = await fetch(`/delete/user/${customer_id}`, {
+        method: 'DELETE',
         headers: {
           'Authentication-Token': this.token,
-
+          'Content-Type': 'application/json',
         },
       })
 
-      console.log('first', customer.id)
+      console.log('first', customer_id)
+
       const data = await res.json()
 
       if (res.ok) {

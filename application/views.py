@@ -138,6 +138,13 @@ def all_customers():
 
     return jsonify(formatted_results)
 
+@app.route('/delete/user/<int:user_id>', methods=['DELETE'])
+def delete_user(user_id):
+    current_user_id = User.query.get_or_404(user_id)
+    db.session.delete(current_user_id)
+    db.session.commit()
+    return jsonify({'message': 'User deleted successfully'})
+
 
 @app.get('/allproducts')
 def test():
