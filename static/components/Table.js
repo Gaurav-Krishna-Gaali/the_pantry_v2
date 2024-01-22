@@ -151,7 +151,7 @@ export default {
     </div>
     <div class="modal-footer">
       <button type="button" @click="closeModal(product)" class="btn btn-default" data-dismiss="modal">Close</button>
-      <button type="button" class="btn btn-primary">Save changes</button>
+      <button type="button"  class="btn btn-primary">Save changes</button>
     </div>
   </div>
 </div>
@@ -170,7 +170,7 @@ export default {
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-          <h4 class="modal-title" id="myModal1Label">Modal title</h4>
+          <h4 class="modal-title" id="myModal1Label">Category info</h4>
           <button type="button" @click="closeModal(category)" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
           </div>
           <div class="modal-body" >
@@ -194,7 +194,7 @@ export default {
           </div>
           <div class="modal-footer">
             <button type="button" @click="closeModal(product)" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
+            <button type="button" @click="saveCategoryChanges(category)" class="btn btn-primary">Save changes</button>
           </div>
         </div>
       </div>
@@ -254,7 +254,49 @@ export default {
             this.product = product;
             $('#product').modal('show');
         },
+
+        saveCategoryChanges(category) {
+            this.editedCategory = { ...category, ...this.editedCategory };
+            console.log(this.editedCategory);
+
+            this.updateCategoryInAPI(this.editedCategory)
+                .then(() => {
+                    // Optionally, you can update the local data or trigger a refresh
+                    console.log('Category updated successfully');
+                    this.closeModal();
+                })
+                .catch((error) => {
+                    console.error('Failed to update category:', error);
+                });
+
+
+
+        },
+
+
+        async updateCategoryInAPI(updatedCategory) {
+            try {
+                const response = await fetch(`/update_category/${updatedCategory.id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authentication-Token': this.authtoken,
+                    },
+                    body: JSON.stringify(updatedCategory),
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to update category');
+                }
+
+                const result = await response.json();
+                console.log(result.message);
+            } catch (error) {
+                throw new Error(error.message);
+            }
+        },
     },
+
 
 
     async mounted() {

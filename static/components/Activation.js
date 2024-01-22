@@ -35,7 +35,7 @@ export default {
 
                                 <td>
 
-                                <button @click="openViewModal(product)" class="btn btn-warning me-1">
+                                <button @click="approve(product.id)" class="btn btn-warning me-1">
                                 <i class="bi bi-pencil-square"></i>
                                 </button>
 
@@ -91,7 +91,7 @@ export default {
 
                         <td>
 
-                        <button @click="openViewModal(category)" class="btn btn-warning me-1">
+                        <button @click="Categoryapprove(category.id)" class="btn btn-warning me-1">
                         <i class="bi bi-pencil-square"></i>
                         </button>
 
@@ -126,6 +126,32 @@ export default {
         Products,
         Categories,
     },
+
+    methods: {
+        async approve(product_id) {
+            const res = await fetch(`/activate/product/${product_id}`, {
+                headers: {
+                    'Authentication-Token': this.authtoken,
+                },
+            })
+            const data = await res.json()
+            if (res.ok) {
+                alert(data.message)
+            }
+        },
+        async Categoryapprove(category_id) {
+            const res = await fetch(`/activate/category/${category_id}`, {
+                headers: {
+                    'Authentication-Token': this.authtoken,
+                },
+            })
+            const data = await res.json()
+            if (res.ok) {
+                alert(data.message)
+            }
+        },
+    },
+
     async mounted() {
         const res = await fetch('/api/products', {
             headers: {

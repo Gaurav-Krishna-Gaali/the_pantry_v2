@@ -71,7 +71,7 @@ def Userlogin():
 
 @app.put('/update_product/<int:product_id>')
 @auth_required("token")
-@roles_required("admin", "storemanager")
+@roles_required('admin' or 'storemanager') 
 def update_product(product_id):
     product = Products.query.get_or_404(product_id)
 
@@ -81,10 +81,25 @@ def update_product(product_id):
     product.price = data.get('price', product.price)
     product.image = data.get('image', product.image)
 
-    # Commit changes to the database
     db.session.commit()
 
     return jsonify({'message': 'Product updated successfully'})
+
+@app.put('/update_category/<int:category_id>')
+@auth_required("token")
+@roles_required('admin' or 'storemanager') 
+def update_category(category_id):
+    category = Category.query.get_or_404(category_id)
+
+    data = request.get_json()
+    category.name = data.get('name', category.name)
+    category.description = data.get('description', category.description)
+    category.image = data.get('image', category.image)
+
+    db.session.commit()
+
+    return jsonify({'message': 'Category updated successfully'})
+
 
 
 customer_fields = {

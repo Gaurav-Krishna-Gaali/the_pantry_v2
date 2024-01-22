@@ -32,15 +32,11 @@ export default {
 
                                 <td>
 
-                                <button @click="openViewModal(customer)" class="btn btn-success" v-if='!customer.active' @click="approve(customer.id)">
+                                <button class="btn btn-success" v-if="!customer.active && customer.roles[0] == 'storemanager'" @click="approve(customer.id)" >
                                 <i class="bi bi-check2-circle"></i>
                                 </button>
 
-                                <button @click="openViewModal(customer)" class="btn btn-outline-success me-1" v-if="customer.active">
-                                <i class="bi bi-check2-circle"></i>
-                                </button>
-
-                                <button @click="openViewModal(customer)" class="btn btn-danger me-1">
+                                <button @click="deleteUser(customer)" class="btn btn-danger me-1" >
                                 <i class="bi bi-trash3"></i>
                                 </button>
 
@@ -80,6 +76,21 @@ export default {
         alert(data.message)
       }
     },
+    async deleteUser(customer) {
+      const res = await fetch(`/delete/user/${customer.id}`, {
+        headers: {
+          'Authentication-Token': this.token,
+
+        },
+      })
+
+      console.log('first', customer.id)
+      const data = await res.json()
+
+      if (res.ok) {
+        alert(data.message)
+      }
+    }
   },
   async mounted() {
     const res = await fetch('/customers', {
