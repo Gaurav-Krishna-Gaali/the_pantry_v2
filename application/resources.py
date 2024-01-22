@@ -81,7 +81,7 @@ class StoreCategory(Resource):
         return categories, 200
     
     @auth_required("token")
-    @roles_required("storemanager")
+    @roles_required("storemanager" or "admin")
     def post(self):
         args = parser.parse_args()
         category = Category(

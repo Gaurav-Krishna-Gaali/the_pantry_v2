@@ -35,8 +35,8 @@ export default {
 
                                 <td>
 
-                                <button @click="approve(product.id)" class="btn btn-warning me-1">
-                                <i class="bi bi-pencil-square"></i>
+                                <button @click="approve(product.id)" class="btn btn-success me-1">
+                                <i class="bi bi-check2-circle"></i>
                                 </button>
 
                                 <button @click="openViewModal(product)" class="btn btn-danger me-1">
@@ -91,8 +91,8 @@ export default {
 
                         <td>
 
-                        <button @click="Categoryapprove(category.id)" class="btn btn-warning me-1">
-                        <i class="bi bi-pencil-square"></i>
+                        <button @click="Categoryapprove(category.id)" class="btn btn-success me-1">
+                        <i class="bi bi-check2-circle"></i>
                         </button>
 
                         <button @click="openViewModal(category)" class="btn btn-danger me-1">
