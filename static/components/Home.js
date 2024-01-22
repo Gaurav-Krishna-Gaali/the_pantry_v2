@@ -1,4 +1,4 @@
-import AdminHome from "./AdminHome.js"
+import AdminHome from "./DashboardHome.js"
 import CustomerHome from "./CustomerHome.js"
 import StoreManagerHome from "./StoreManagerHome.js"
 import Products from "./Products.js"
@@ -10,10 +10,7 @@ export default {
     template: `
         <div class="container">
         <div className=""></div>
-            <Dashboard/>
-            <AdminHome v-if="userRole === 'admin'"/>
-            <CustomerHome v-else-if="userRole === 'customer'"/>
-            <StoreManagerHome v-else-if="userRole === 'storemanager'"/>
+            <Dashboard v-if="userRole !== 'customer'"/>
            <Shop  />
               </div>
     `,

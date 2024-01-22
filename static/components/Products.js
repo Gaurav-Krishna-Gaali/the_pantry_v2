@@ -1,12 +1,27 @@
 export default {
-  template: `<div class="card d-flex flex-row  m-3 p-2 justify-space-between justify-content-between" v-if="role == 'storemanager'||'admin'">Products
-  <h4>Name: {{product.name}}</h4> 
-    <h4>  price: {{product.price}}</h4>
-    <h4>  Quantity: {{product.quantity}}</h4>
-    <div className="">
-    <button class="btn btn-primary" v-if='!product.is_approved' @click="approve(product.id)" > Approve </button>
-    <button class="btn btn-outline-success" v-if='product.is_approved'  > Approved </button>
-    </div>
+  template: `
+  
+  
+  <div class="card d-flex flex-row  m-3 p-2 justify-space-between justify-content-between" v-if="role == 'storemanager'||'admin'">Products
+    <tr>
+                                <td>{{ product.id }}</td>
+                                <td>{{ product.name }}</td>
+                                <td>{{ product.quantity }}</td>
+                                <td>$ {{ product.price.toFixed(2) }}</td>
+                                <td>{{ product.image || 'No Image' }}</td>
+
+                                <td>
+
+                                <button v-if='!product.is_approved' @click="approve(product.id)" class="btn btn-warning me-1">
+                                <i class="bi bi-pencil-square"></i>
+                                </button>
+
+                                <button @click="openViewModal(product)" class="btn btn-danger me-1">
+                                <i class="bi bi-trash3"></i>
+                                </button>
+
+                                </td>
+    </tr>
     </div>`,
 
   props: ['product'],

@@ -1,5 +1,5 @@
 export default {
-  template: `<div class="container" v-if="flag = 'customer_flag'">
+  template: `<div class="container" v-if="flag = 'customer_flag'" v-if="role == 'admin'">
     <h3 class="m-4">Customers </h3>
     <div v-if="error"> {{error}}</div>
     <div class="row" >
@@ -23,7 +23,7 @@ export default {
                             </tr>
                         </thead>
                         <tbody >
-                            <tr v-for="(customer, index)  in allCustomers" :key="index">
+                            <tr v-for="(customer, index)  in allCustomers" :key="index" >
                                 <td>{{ customer.id }}</td>
                                 <td>{{ customer.username || 'No Name' }}</td>
                                 <td>{{ customer.email }}</td>
@@ -63,6 +63,7 @@ export default {
   data() {
     return {
       allCustomers: [],
+      role: localStorage.getItem('role'),
       token: localStorage.getItem('auth-token'),
       error: null,
     }

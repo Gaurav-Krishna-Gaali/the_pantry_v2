@@ -7,6 +7,7 @@ export default {
         <div class="card bg-light ms-4 me-4 mb-4">
             <div class="card-header">
                 <i class="fa-solid fa-list fa-lg"></i> Products in Store
+                <router-link to="/add-products" class="btn btn-primary float-end">Add</router-link>
             </div>
             <div class="card-body">
                 <p class="card-text">
@@ -63,6 +64,8 @@ export default {
         <div class="card bg-light ms-4 me-4 mb-4">
             <div class="card-header">
                 <i class="fa-solid fa-list fa-lg"></i> Categories in Store 
+                <router-link to="/add-categories" class="btn btn-primary float-end">Add</router-link>
+
             <div class="card-body">
                 <p class="card-text">
                 <div class="table-responsive">
@@ -85,7 +88,7 @@ export default {
 
                                 <td>
 
-                                <button @click="openViewModal(category)" class="btn btn-warning me-1">
+                                <button @click="openCategoryViewModal(category)" class="btn btn-warning me-1">
                                 <i class="bi bi-pencil-square"></i>
                                 </button>
 
@@ -114,31 +117,77 @@ export default {
 
 
 
-    <div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModal1Label">
+
+
+
+<div class="modal fade" id="ProductmyModal1" tabindex="-1" role="dialog" aria-labelledby="myModal1Label">
+<div class="modal-dialog" role="document">
+  <div class="modal-content">
+    <div class="modal-header">
+    <h4 class="modal-title" id="myModal1Label">Modal title</h4>
+    <button type="button" @click="closeModal(product)" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    </div>
+    <div class="modal-body" >
+
+    <form  @submit.prevent="saveChanges">
+    <div class="form-group">
+      <label for="editName">Name:</label>
+      <input v-model="editedProduct.name" type="text" class="form-control" id="editName">
+    </div>
+    <div class="form-group">
+      <label for="editQuantity">Quantity:</label>
+      <input v-model="editedProduct.quantity" type="number" class="form-control" id="editQuantity">
+    </div>
+    <div class="form-group">
+      <label for="editPrice">Price:</label>
+      <input v-model="editedProduct.price" type="number" step="0.01" class="form-control" id="editPrice">
+    </div>
+    <div class="form-group">
+      <label for="editPrice">Image:</label>
+      <input v-model="editedProduct.image" type="text" class="form-control" id="editImage">
+    </div>
+    
+  </form>
+    </div>
+    <div class="modal-footer">
+      <button type="button" @click="closeModal(product)" class="btn btn-default" data-dismiss="modal">Close</button>
+      <button type="button" class="btn btn-primary">Save changes</button>
+    </div>
+  </div>
+</div>
+</div>    
+
+
+
+
+
+
+
+
+
+
+    <div class="modal fade" id="CategorymyModal1" tabindex="-1" role="dialog" aria-labelledby="myModal1Label">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
           <h4 class="modal-title" id="myModal1Label">Modal title</h4>
-          <button type="button" @click="closeModal(product)" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <button type="button" @click="closeModal(category)" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
           </div>
           <div class="modal-body" >
 
           <form   @submit.prevent="saveChanges">
           <div class="form-group">
-            <label for="editName">Name:</label>
-            <input v-model="editedProduct.name" type="text" class="form-control" id="editName">
+            <label for="editName">Name: {{editedCategory.description}}</label>
+            <input v-model="editedCategory.name" type="text" class="form-control" id="editName">
           </div>
           <div class="form-group">
-            <label for="editQuantity">Quantity:</label>
-            <input v-model="editedProduct.quantity" type="number" class="form-control" id="editQuantity">
+            <label for="editQuantity">Description:</label>
+            <input v-model="editedCategory.description"  class="form-control" id="editQuantity">
           </div>
-          <div class="form-group">
-            <label for="editPrice">Price:</label>
-            <input v-model="editedProduct.price" type="number" step="0.01" class="form-control" id="editPrice">
-          </div>
+         
           <div class="form-group">
             <label for="editPrice">Image:</label>
-            <input v-model="editedProduct.image" type="text" class="form-control" id="editImage">
+            <input v-model="editedCategory.image" type="text" class="form-control" id="editImage">
           </div>
           
         </form>
@@ -164,13 +213,18 @@ export default {
             categories: [],
             showModal: false,
             model_product: null,
-            model_product: null,
-            modal: null,
+            model_category: null,
             editedProduct: {
                 id: null,
                 name: '',
                 quantity: 0,
                 price: 0.0,
+                image: '',
+            },
+            editedCategory: {
+                id: null,
+                name: '',
+                description: '',
                 image: '',
             },
         }
@@ -181,11 +235,18 @@ export default {
             this.model_product = product;
             this.editedProduct = { ...product };
             console.log(this.model_product)
-            console.log("edited: ", this.editProduct)
-            $('#myModal1').modal('show');
+            console.log("edited: ", this.editedProduct)
+            $('#ProductmyModal1').modal('show');
+        },
+        openCategoryViewModal(category) {
+            this.model_category = category;
+            this.editedCategory = { ...category };
+            console.log(this.model_category)
+            console.log("edited: ", this.editedCategory)
+            $('#CategorymyModal1').modal('show');
         },
         closeModal() {
-            $('#myModal1').modal('hide');
+            $('#CategorymyModal1').modal('hide');
         },
 
         editProduct(product) {

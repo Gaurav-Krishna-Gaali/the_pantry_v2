@@ -4,7 +4,7 @@ import Customers from "./Customers.js"
 
 export default {
   template: `<div>
-    <h2 class="text-center">Welcome Home,  SuperUser!</h2>
+    <h2 class="text-center m-3">Welcome Home,  {{userRole}}</h2>
     <ul class="nav nav-tabs" role="tablist">
   <li class="nav-item" role="presentation"  v-if="userRole == 'admin'">
     <a class="nav-link active" data-bs-toggle="tab" href="#customer" aria-selected="true" role="tab">Customers</a>
@@ -15,7 +15,7 @@ export default {
   <li class="nav-item" role="presentation">
     <a class="nav-link" data-bs-toggle="tab" href="#product" aria-selected="true" role="tab">Products</a>
   </li>
-  <li class="nav-item" role="presentation">
+  <li class="nav-item" role="presentation" v-if="userRole == 'admin'">
     <a class="nav-link" data-bs-toggle="tab" href="#profile" aria-selected="false" role="tab" tabindex="-1">Activation Requests</a>
   </li>
  
@@ -33,7 +33,7 @@ export default {
     <Table flag="product_flag"/>
     </div>
   <div class="tab-pane fade" id="profile" role="tabpanel">
-     <Activation/>
+     <Activation />
     <p>Food truck fixie locavore, accusamus mcsweeney's marfa nulla single-origin coffee squid. Exercitation +1 labore velit, blog sartorial PBR leggings next level wes anderson artisan four loko farm-to-table craft beer twee. Qui photo booth letterpress, commodo enim craft beer mlkshk aliquip jean shorts ullamco ad vinyl cillum PBR. Homo nostrud organic, assumenda labore aesthetic magna delectus mollit.</p>
   </div>
   <div class="tab-pane fade" id="dropdown1">

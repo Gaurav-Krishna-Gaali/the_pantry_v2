@@ -4,7 +4,7 @@ import Customers from "./components/Customers.js"
 import ProductsForm from "./components/ProductsForm.js"
 import CategoriesForm from "./components/CategoriesForm.js"
 import StoreManagerHome from "./components/StoreManagerHome.js"
-import AdminHome from "./components/AdminHome.js"
+import AdminHome from "./components/DashboardHome.js"
 
 const routes = [
     {
@@ -26,7 +26,7 @@ const routes = [
         path: '/admin', component: AdminHome
     },
     {
-        path: '/storemanager', component: StoreManagerHome
+        path: '/storemanager', component: AdminHome
     },
 
 

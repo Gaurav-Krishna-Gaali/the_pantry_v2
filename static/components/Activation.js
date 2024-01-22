@@ -3,9 +3,115 @@ import Categories from "./Categories.js"
 
 export default {
     template: `
-        <div class="container">
-            <Products v-for = "(product, index) in products" :key="index" :product="product" />
-            <Categories v-for = "(category, cindex) in categories" :key="'122'+ cindex" :category="category" />
+    <div class="container">
+    <h3 class="m-4">Inventory </h3>
+<div class="row" >
+    <div class="col-12">
+        <div class="card bg-light ms-4 me-4 mb-4">
+            <div class="card-header">
+                <i class="fa-solid fa-list fa-lg"></i> Products  Approvals
+            </div>
+            <div class="card-body">
+                <p class="card-text">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Quantity</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Image Url</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody >
+                            <tr v-for="(product, index) in products" :key="index" v-if="!product.is_approved">
+                                <td>{{ product.id }}</td>
+                                <td>{{ product.name }}</td>
+                                <td>{{ product.quantity }}</td>
+                                <td>$ {{ product.price.toFixed(2) }}</td>
+                                <td>{{ product.image || 'No Image' }}</td>
+
+                                <td>
+
+                                <button @click="openViewModal(product)" class="btn btn-warning me-1">
+                                <i class="bi bi-pencil-square"></i>
+                                </button>
+
+                                <button @click="openViewModal(product)" class="btn btn-danger me-1">
+                                <i class="bi bi-trash3"></i>
+                                </button>
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+                </p>
+            </div>
+        </div>
+        <h5 v-if="products.length == 0" class="alert alert-primary ms-4 me-4">No Student Records</h5>
+    </div>
+
+
+
+
+
+
+
+
+<div class="row" >
+    <div class="col-12">
+        <div class="card bg-light ms-4 me-4 mb-4">
+            <div class="card-header">
+                <i class="fa-solid fa-list fa-lg"></i> Category Approvals
+            </div>
+            <div class="card-body">
+                <p class="card-text">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Image Url</th>
+                            <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody >
+                        <tr v-for="(category, index) in categories" :key="index" v-if="!category.is_approved">
+                        <td>{{ category.id }}</td>
+                        <td>{{ category.name }}</td>
+                        <td>{{ category.description }}</td>
+                        <td>{{ category.image || 'No Image' }}</td>
+
+                        <td>
+
+                        <button @click="openViewModal(category)" class="btn btn-warning me-1">
+                        <i class="bi bi-pencil-square"></i>
+                        </button>
+
+                        <button @click="openViewModal(category)" class="btn btn-danger me-1">
+                        <i class="bi bi-trash3"></i>
+                        </button>
+
+                        </td>
+
+                    </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+                </p>
+            </div>
+        </div>
+        <h5 v-if="category == 0" class="alert alert-primary ms-4 me-4">No Student Records</h5>
+    </div>
+            
         </div>
     `,
     data() {
