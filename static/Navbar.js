@@ -30,7 +30,7 @@ export default {
                         </a>
                         <div class="dropdown-menu">
                             <div v-if="is_login">
-                                <a class="dropdown-item nav-link">My Wallet : ₹ 1000</a>
+                                <a class="dropdown-item nav-link">My Wallet : ₹ {{wallet}}</a>
                                 <a class="dropdown-item nav-link" data-bs-toggle="offcanvas" href="#offcanvasExample"
                                     role="button" aria-controls="offcanvasExample">
                                     My Orders
@@ -132,7 +132,7 @@ export default {
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
-                    <a class="btn btn-success" href="#">Place Order</a>
+                    <a class="btn btn-success" @click="placeOrder" href="#">Place Order</a>
                 </div>
             </div>
         </div>
@@ -158,6 +158,7 @@ export default {
             role: localStorage.getItem('role'),
             is_login: localStorage.getItem('auth-token'),
             cart_items: [],
+            wallet: 0,
         }
     },
 
@@ -184,9 +185,18 @@ export default {
                 }
             })
             const data = await res.json()
-            console.log(data)
-            if (res.ok) {
+
+            const walletResponse = await fetch('/api/wallet', {
+                headers: {
+                    'Authentication-Token': this.is_login
+                }
+            });
+            const walletData = await walletResponse.json();
+
+            console.log(data, walletData);
+            if (res.ok && walletResponse.ok) {
                 this.cart_items = data
+                this.wallet = walletData.wallet;
             }
             else {
             }
@@ -213,8 +223,40 @@ export default {
             }
         },
 
+        async placeOrder() {
+            try {
+                const res = await fetch('/Checkout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authentication-Token': this.is_login,
+                    },
+                });
+
+                const data = await res.json();
+                if (res.ok) {
+                    console.log('Order placed successfully');
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                console.error('Error placing order:', error);
+            }
+        },
+
         async mounted() {
-            await this.fetchcart()
+
+            const walletResponse = await fetch('/api/wallet', {
+                headers: {
+                    'Authentication-Token': this.is_login
+                }
+            });
+            const walletData = await walletResponse.json();
+            if (walletResponse.ok) {
+                this.wallet = walletData.wallet;
+            }
+            else {
+            }
         }
     }
 }

@@ -184,6 +184,14 @@ class CartResource(Resource):
         ]
 
         return cart_items_data, 200
+    
+class WalletResource(Resource):
+    @auth_required("token")
+    def get(self):
+        user_id = current_user.id
+        user = User.query.get_or_404(user_id)
+        return {'wallet': user.wallet}, 200
+
 
 # helper fun
 def image_getter(id):
@@ -193,3 +201,4 @@ def image_getter(id):
 api.add_resource(StoreCategory, '/categories')
 api.add_resource(StoreProducts, '/products')
 api.add_resource(CartResource, '/cart')
+api.add_resource(WalletResource, '/wallet')

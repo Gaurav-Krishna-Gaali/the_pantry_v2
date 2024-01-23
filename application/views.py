@@ -1,6 +1,6 @@
-from flask import current_app as app, jsonify, request, render_template
+from flask import current_app as app, jsonify, request, render_template, flash
 from flask_security import auth_required, roles_required, current_user
-from .models import User, db, Products, Category, RolesUsers, Role, OrderItem, Orders, CartItem
+from .models import User, db, Products, Category, RolesUsers, Role, OrderItem, Orders, CartItem, User
 from .sec import datastore
 from werkzeug.security import check_password_hash
 from flask_restful import marshal, fields
@@ -165,6 +165,65 @@ def remove_from_cart(item_id):
     db.session.commit()
     return jsonify({'message': 'Item removed successfully'})
 
+@auth_required("token")
+@app.route('/Checkout', methods=['POST', 'GET'])
+def Checkout():
+    user = User.query.get(current_user.id)
+    wallet = user.wallet
+    cart_items = CartItem.query.filter_by(user_id=current_user.id).all()
+    print(f"The placed items are: {cart_items}")
+
+    for cart_item in cart_items:
+        product = Products.query.get(cart_item.product_id)
+        if product.quantity < cart_item.quantity:
+            flash(f'Insufficient inventory for product: {product.name}', 'error')
+            return jsonify({'message': 'Order placement failed due to insufficient inventory.'}), 400
+
+
+    total_amount = sum(cart_item.product.price * cart_item.quantity for cart_item in cart_items)
+    print(f"Total amount: {total_amount}")
+
+    if wallet >= total_amount:
+        wallet -= total_amount
+        user.wallet = wallet
+        db.session.commit()
+
+        if cart_items:
+            order = Orders(
+                user_id=current_user.id,
+                total_amount=total_amount,
+                status=False, 
+                delivery_address='home'# You can set the delivery address as needed
+            )
+
+            db.session.add(order)
+            db.session.commit()
+
+            for cart_item in cart_items:
+                order_item = OrderItem(
+                    order_id=order.id,  
+                    product_id=cart_item.product_id,
+                    quantity=cart_item.quantity
+                )
+                db.session.add(order_item)
+                db.session.commit()
+
+                # reducing inventory
+                product = Products.query.get(cart_item.product_id)
+                product.quantity -= cart_item.quantity
+                db.session.commit()
+
+            # Clear the cart after placing the order
+            CartItem.query.filter_by(user_id=current_user.id).delete()
+            db.session.commit()
+
+            flash('Order placed successfully!', 'success')
+        else:
+            flash('Your cart is empty.', 'info')
+
+    else:
+        flash('No Sufficient balance')
+    return jsonify({'message': 'Order placed successfully!'}), 200
 
 @app.get('/allproducts')
 def test():
