@@ -75,6 +75,7 @@ def Userlogin():
 @roles_required('storemanager') 
 def update_product(product_id):
     product = Products.query.get_or_404(product_id)
+    product.is_approved = False
 
     data = request.get_json()
     product.name = data.get('name', product.name)
@@ -92,6 +93,7 @@ def update_product(product_id):
 @roles_required('storemanager') 
 def update_category(category_id):
     category = Category.query.get_or_404(category_id)
+    category.is_approved = False
 
     data = request.get_json()
     category.name = data.get('name', category.name)

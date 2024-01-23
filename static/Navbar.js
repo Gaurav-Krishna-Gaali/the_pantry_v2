@@ -244,6 +244,11 @@ export default {
             }
         },
 
+        async created() {
+            // Call fetchcart when the component is created
+            await this.fetchcart();
+        },
+
         async mounted() {
 
             const walletResponse = await fetch('/api/wallet', {
