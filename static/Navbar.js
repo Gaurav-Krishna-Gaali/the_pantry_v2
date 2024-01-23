@@ -18,13 +18,6 @@ export default {
             <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto justify-content-between w-100">
 
-                    <li class="nav-item" v-if="role == 'admin'">
-                        <router-link class="nav-link" to="/customers">Customers</router-link>
-                    </li>
-                    <li class="nav-item" v-else-if="role == 'storemanager'">
-                    </li>
-
-
                     <form class=" d-flex w-100" action="/search" method="POST">
                         <input class="form-control me-sm-2" type="text" name="query"
                             placeholder="Search for products or categories">

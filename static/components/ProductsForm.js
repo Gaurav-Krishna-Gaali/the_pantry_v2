@@ -3,6 +3,7 @@ export default {
     <h1>Products Form</h1>
     <input type="text" placeholder="name" v-model="resource.name" />
     <input type="text" placeholder="quantity"  v-model="resource.quantity"/>
+    <input type="int" placeholder="Category ID"  v-model="resource.category_id"/>
     <input type="text" placeholder="price"  v-model="resource.price"/>
     <button @click="createResource">Create</button>
     </div>`,
@@ -12,6 +13,7 @@ export default {
             resource: {
                 name: null,
                 quantity: null,
+                category_id: null,
                 price: null
             },
             token: localStorage.getItem('auth-token')

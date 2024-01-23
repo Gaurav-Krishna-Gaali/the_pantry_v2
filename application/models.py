@@ -30,7 +30,7 @@ class User(db.Model, UserMixin):
     roles = db.relationship('Role', secondary='roles_users',
                             backref=db.backref('users', lazy='dynamic'))
     products_created = db.relationship('Products', backref='creater', lazy='dynamic')
-    # products_created = db.relationship('Category', backref='creater', lazy='dynamic')
+    category_created = db.relationship('Category', backref='creater', lazy='dynamic')
 
 class Role(db.Model, RoleMixin):
     __tablename__ = 'role'
@@ -44,8 +44,8 @@ class Products(db.Model):
     description = db.Column(db.Text, nullable=True)
     price = db.Column(db.Float, nullable=False)
     quantity = db.Column(db.Integer)
-    # category_id = db.Column(db.Integer, db.ForeignKey(
-    #     'category.id'), nullable=False)
+    category_id = db.Column(db.Integer, db.ForeignKey(
+        'category.id'), nullable=False)
     image = db.Column(db.String(255), nullable=True)
     creater_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     is_approved = db.Column(db.Boolean, default=False)
@@ -62,8 +62,10 @@ class Category(db.Model):
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=True)
     image = db.Column(db.String(255), nullable=True)
-    # products = db.relationship('Products', backref='category', lazy='dynamic')
-    # creater_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    creater_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    is_approved = db.Column(db.Boolean, default=False)
+
+    products = db.relationship('Products', backref='category', lazy='dynamic')
 
     def __repr__(self):
         return f'<Category {self.name}>'

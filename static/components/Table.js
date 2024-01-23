@@ -21,6 +21,7 @@ export default {
                                     <th scope="col">Name</th>
                                     <th scope="col">Quantity</th>
                                     <th scope="col">Price</th>
+                                    <th scope="col">Category ID</th>
                                     <th scope="col">Creater</th>
                                     <th scope="col">Image Url</th>
                                     <th scope="col">Actions</th>
@@ -32,6 +33,7 @@ export default {
                                     <td>{{ product.name }}</td>
                                     <td>{{ product.quantity }}</td>
                                     <td>$ {{ product.price.toFixed(2) }}</td>
+                                    <td>{{ product.category_id }}</td>
                                     <td>{{ product.creater }}</td>
                                     <td>{{ product.image || 'No Image' }}</td>
 
@@ -145,6 +147,11 @@ export default {
                         id="editPrice">
                 </div>
                 <div class="form-group">
+                    <label for="editPrice">Category ID:</label>
+                    <input v-model="editedProduct.category_id" type="number"  class="form-control"
+                        id="editPrice">
+                </div>
+                <div class="form-group">
                     <label for="editPrice">Creater:</label>
                     <input v-model="editedProduct.creater"  class="form-control"
                         id="editPrice">
@@ -225,6 +232,7 @@ export default {
                 name: '',
                 quantity: 0,
                 price: 0.0,
+                category_id: null,
                 creater: '',
                 image: '',
             },

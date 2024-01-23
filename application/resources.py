@@ -10,6 +10,7 @@ api = Api(prefix='/api')
 prodparser = reqparse.RequestParser()
 prodparser.add_argument('name' , type=str, help='name must be an str')
 prodparser.add_argument('quantity' , type=int, help='quantity must be an integer')
+prodparser.add_argument('category_id' , type=int, help='category ID must be an integer')
 prodparser.add_argument('price', type=float, help='price must be a float')
 # parser.add_argument('total_amount', type=float, help='total_amount must be a float')
 
@@ -35,6 +36,7 @@ products_fields = {
     'name': fields.String,
     'quantity': fields.Integer,
     'price': fields.Float,
+    'category_id': fields.Integer,
     'is_approved': fields.Boolean, 
     'creater': Creator
 }
@@ -44,10 +46,13 @@ class StoreProducts(Resource):
     @auth_required("token")
     def get(self):
         if  "storemanager"  in current_user.roles:
-            display_product = Products.query.all()
-        else:
+            # display_product = Products.query.all()
+            display_product = Products.query.filter_by(is_approved=True).all()
+        elif  "admin"  in current_user.roles:
             display_product = Products.query.all()
             # display_product = Products.query.all(or_(Products.is_approved == True , Products.creator == current_user)).all()
+        else:
+            display_product = Products.query.filter_by(is_approved=True).all()
             
         print(f"products are {display_product}")
         if len(display_product) < 0:
@@ -58,11 +63,11 @@ class StoreProducts(Resource):
     @roles_required("storemanager")
     def post(self):
         args = prodparser.parse_args()
-        products = Products(name= args.get('name'),quantity= args.get('quantity'),price= args.get('price'), creater_id= current_user.id)
+        products = Products(name= args.get('name'),quantity= args.get('quantity'), category_id = args.get('category_id'),price= args.get('price'), creater_id= current_user.id)
         print(products) 
         db.session.add(products)
         db.session.commit()
-        return {"message": "Study Resource Created"}
+        return {"message": "Product Created"}
 
 class StoreCategory(Resource):
     category_fields = {
@@ -70,24 +75,30 @@ class StoreCategory(Resource):
         'name': fields.String,
         'description': fields.String,
         'image': fields.String,
+        'is_approved': fields.Boolean, 
+        'creater': Creator
     }
 
     @marshal_with(category_fields)
     @auth_required("token")
     def get(self):
-        categories = Category.query.all()
+        if  "admin"  in current_user.roles:
+            categories = Category.query.all()
+        else:
+            categories = Category.query.filter_by(is_approved=True).all()
         if not categories:
             return {'message': 'No categories found'}, 404
         return categories, 200
     
     @auth_required("token")
-    @roles_required("storemanager" or "admin")
+    @roles_required("storemanager")
     def post(self):
         args = parser.parse_args()
         category = Category(
             name=args.get('name'),
             description=args.get('description'),
-            image=args.get('image')
+            image=args.get('image'),
+            creater_id= current_user.id
         )
         db.session.add(category)
         db.session.commit()

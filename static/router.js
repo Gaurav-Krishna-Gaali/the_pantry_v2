@@ -32,7 +32,7 @@ const routes = [
 
     {
         path: '/demo', component: () => import('./components/Demo.js')
-    }
+    },
 
 ]
 
