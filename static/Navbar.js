@@ -51,8 +51,9 @@ export default {
                             data-bs-toggle="modal" data-bs-target="#myModal">
                             <i class="bi-cart-fill me-1"></i>
                             Cart
-                            <span class="badge bg-success text-white ms-1 rounded-pill">{{ sum_products
-                                }}</span></button>
+                            <span class="badge bg-success text-white ms-1 rounded-pill">
+                            {{ cart_items.length }}
+                            </span></button>
                     </li>
                     </li>
                 </ul>
@@ -95,17 +96,35 @@ export default {
                             <th scope="col">Title</th>
                             <th scope="col">Quantity</th>
                             <th scope="col">Price</th>
+                            <th scope="col"></th>
                             <th scope="col">Total</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr v-for="(cart_item, index) in cart_items" :key="index">
+                            <tr v-for="(cart_item, index) in cart_items" :key="index" scope="row">
                                 <td scope="col">{{cart_item.product.produt_image}}</td>
-                                <td scope="col">{{cart_item.product.product_name}}</td>
+                                <td scope="col">
+                                <h5 class="card-title">
+                                {{cart_item.product.product_name}}
+                                </h5>
+                                </td>
                                 <td scope="col">{{cart_item.product.product_quantity}}</td>
                                 <td scope="col">{{cart_item.product.product_price}}</td>
+                                <td>
+                                    <button @click="removeItemFromCart(cart_item.product.product_id)" type="submit" class="btn-close bg-red"></button>
+                            </td>
                                 <td scope="col">{{cart_item.product.product_price * cart_item.product.product_quantity}}</td>
                             </tr>
+
+                            <tr class="">
+                            <th scope="row"></th>
+                            <td></td>
+                            <td>Grand Total</td>
+                            <td>
+                                <bold> </bold>
+                            </td>
+                            <td>₹{{products_total}}</td>
+                        </tr>
                         </tbody>
                                 
 
@@ -141,17 +160,22 @@ export default {
             cart_items: [],
         }
     },
-    // computed(){
-    //   is_login(){
-    //     return localStorage.getItem('auth-token')
-    //   }
-    // } ,
+
+    computed: {
+        products_total() {
+            return this.cart_items.reduce((total, cart_item) => {
+                return total + cart_item.product.product_price * cart_item.product.product_quantity;
+            }, 0);
+        },
+    },
+
     methods: {
         logout() {
             localStorage.removeItem('auth-token')
             localStorage.removeItem('role')
             this.$router.push({ path: '/login' })
         },
+
 
         async fetchcart() {
             const res = await fetch('/api/cart', {
@@ -165,24 +189,32 @@ export default {
                 this.cart_items = data
             }
             else {
-                alert(data.message)
             }
-        }
-    },
+        },
 
-    async mounted() {
-        const res = await fetch('/api/cart', {
-            headers: {
-                'Authentication-Token': this.authtoken
+        async removeItemFromCart(item_id) {
+            try {
+                const res = await fetch(`/remove_from_cart/${item_id}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authentication-Token': this.is_login
+                    },
+                });
+
+                const data = await res.json();
+                if (res.ok) {
+                    this.fetchcart();
+                    window.location.reload();
+                } else {
+                }
+            } catch (error) {
+                console.error('Error removing item from cart:', error);
             }
-        })
-        const data = await res.json()
-        console.log(data)
-        if (res.ok) {
-            this.cart_items = data
-        }
-        else {
-            alert(data.message)
+        },
+
+        async mounted() {
+            await this.fetchcart()
         }
     }
 }

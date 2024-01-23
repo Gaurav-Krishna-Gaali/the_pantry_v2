@@ -147,6 +147,24 @@ def delete_user(user_id):
     db.session.commit()
     return jsonify({'message': 'User deleted successfully'})
 
+@auth_required("token")
+@app.route('/remove_from_cart/<int:item_id>', methods=['POST'])
+def remove_from_cart(item_id):
+    item_in_cart = CartItem.query.filter_by(
+        user_id=current_user.id, product_id=item_id).all()
+    cart_items_to_delete = []
+
+    # Add cart items to the list
+    for cart_item in item_in_cart:
+        cart_items_to_delete.append(cart_item)
+
+    print(item_in_cart)
+
+    for cart_item in cart_items_to_delete:
+        db.session.delete(cart_item)
+    db.session.commit()
+    return jsonify({'message': 'Item removed successfully'})
+
 
 @app.get('/allproducts')
 def test():
@@ -155,76 +173,3 @@ def test():
     print(f"products are {allPro}")
     return jsonify(marshal(allPro, customer_fields))
 
-@app.get('/example')
-def trying_to():
-    orders =  cart_items_costs()
-    print(f" these are cart for 2: {orders}")
-    return jsonify(orders)
-def Myorders():
-    upcoming_orders = []
-    delivered_orders = []
-    order_data = db.session.query(Orders, OrderItem, Products)\
-    .join(OrderItem, Orders.id == OrderItem.order_id)\
-    .join(Products, OrderItem.product_id == Products.id)\
-    .filter(Orders.user_id == 2)\
-    .all()
-    print(order_data)
-
-    for order, order_item, product in order_data:
-    # Access the data from each table
-        order_id = order.id
-        order_date = order.order_date
-        total_amount = order.total_amount
-        status = order.status
-        delivery_address = order.delivery_address
-
-        order_item_id = order_item.id
-        quantity = order_item.quantity
-
-        product_id = product.id
-        product_name = product.name
-        product_description = product.description
-        product_price = product.price
-
-        order_object = {
-            "order_id": order_id,
-            "order_date": order_date,
-            "total_amount": total_amount,
-            "status": status,
-            "delivery_address": delivery_address,
-            "order_item_id": order_item_id,
-            "quantity": quantity,
-            "product_id": product_id,
-            "product_name": product_name,
-            "product_description": product_description,
-            "product_price": product_price
-        }
-
-        if status == False:
-            upcoming_orders.append(order_object)
-        else:
-            delivered_orders.append(order_object)
-    return upcoming_orders, delivered_orders
-
-def cart_items_costs():
-    user_id = 2
-    print(user_id)
-    cart_items_with_products = db.session.query(CartItem, Products)\
-        .join(Products, CartItem.product_id == Products.id)\
-        .filter(CartItem.user_id == user_id)\
-        .all()
-    products_in_cart = []
-    for cart_item, product in cart_items_with_products:
-        cart_item_data = {
-            'product_id': product.id,
-            'product_name': product.name,
-            'product_desc': product.description,
-            'product_price': product.price,
-            'quantity': cart_item.quantity,
-            'product_category_id': product.category_id,
-            'product_image': product.image,
-            'subtotal': product.price * cart_item.quantity
-        }
-        products_in_cart.append(cart_item_data)
-    print(products_in_cart)
-    return products_in_cart
