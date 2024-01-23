@@ -24,7 +24,6 @@ export default {
                         <button class="btn btn-success my-2 my-sm-0" type="submit">Search</button>
                     </form>
 
-
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
                             aria-haspopup="true" aria-expanded="false">Profile
@@ -47,7 +46,7 @@ export default {
                             <a class="dropdown-item" href="/admin">Admin</a>
                         </div>
 
-                    <li><button type="button"
+                    <li><button type="button" @click="fetchcart"
                             class="btn btn-outline-success d-flex justify-content-center align-items-center"
                             data-bs-toggle="modal" data-bs-target="#myModal">
                             <i class="bi-cart-fill me-1"></i>
@@ -92,13 +91,23 @@ export default {
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th scope="col">Product</th>
-                                <th scope="col">Title</th>
-                                <th scope="col">Quantity</th>
-                                <th scope="col"></th>
-                                <th scope="col">Total</th>
+                            <th scope="col">Product</th>
+                            <th scope="col">Title</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">Total</th>
                             </tr>
-                        </thead>
+                            </thead>
+                            <tbody>
+                            <tr v-for="(cart_item, index) in cart_items" :key="index">
+                                <td scope="col">{{cart_item.product.produt_image}}</td>
+                                <td scope="col">{{cart_item.product.product_name}}</td>
+                                <td scope="col">{{cart_item.product.product_quantity}}</td>
+                                <td scope="col">{{cart_item.product.product_price}}</td>
+                                <td scope="col">{{cart_item.product.product_price * cart_item.product.product_quantity}}</td>
+                            </tr>
+                        </tbody>
+                                
 
                     </table>
                 </div>
@@ -129,6 +138,7 @@ export default {
         return {
             role: localStorage.getItem('role'),
             is_login: localStorage.getItem('auth-token'),
+            cart_items: [],
         }
     },
     // computed(){
@@ -141,6 +151,38 @@ export default {
             localStorage.removeItem('auth-token')
             localStorage.removeItem('role')
             this.$router.push({ path: '/login' })
+        },
+
+        async fetchcart() {
+            const res = await fetch('/api/cart', {
+                headers: {
+                    'Authentication-Token': this.is_login
+                }
+            })
+            const data = await res.json()
+            console.log(data)
+            if (res.ok) {
+                this.cart_items = data
+            }
+            else {
+                alert(data.message)
+            }
+        }
+    },
+
+    async mounted() {
+        const res = await fetch('/api/cart', {
+            headers: {
+                'Authentication-Token': this.authtoken
+            }
+        })
+        const data = await res.json()
+        console.log(data)
+        if (res.ok) {
+            this.cart_items = data
+        }
+        else {
+            alert(data.message)
         }
     }
 }

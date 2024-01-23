@@ -124,9 +124,13 @@ class CartResource(Resource):
     # @marshal_with(user_fields)
     @auth_required("token")
     def get(self):
-        user_id = current_user.id
-        user = User.query.get_or_404(user_id)
+        # user_id = current_user.id
+        # user = User.query.get_or_404(user_id)
+        print(current_user.id)
         cart_items = CartItem.query.filter_by(user_id=current_user.id).all()
+        cart_items_2 = CartItem.query.filter_by(user_id=1).all()
+        print(f" The cart items are: {cart_items}")
+        print(f" The cart items are: {cart_items_2}")
         cart_items_data = [
             {
                 'product': {
@@ -135,11 +139,12 @@ class CartResource(Resource):
                     'produt_image': Products.query.get_or_404(item.product_id).image,
                     'product_name': Products.query.get_or_404(item.product_id).name,
                     'product_price': Products.query.get_or_404(item.product_id).price
-
                 },
             }
             for item in cart_items
         ]
+
+        print(f"the items are: {cart_items_data}") 
 
         if not cart_items_data:
             return {'message': 'No categories found'}, 404

@@ -118,6 +118,8 @@ export default {
                 body: JSON.stringify(this.resource)
             })
 
+            window.location.reload();
+
             const data = await res.json()
             if (res.ok) {
                 console.log('Added successfully')
