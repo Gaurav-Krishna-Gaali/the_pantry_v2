@@ -3,8 +3,8 @@ import Login from "./components/Login.js"
 import Customers from "./components/Customers.js"
 import ProductsForm from "./components/ProductsForm.js"
 import CategoriesForm from "./components/CategoriesForm.js"
-import StoreManagerHome from "./components/StoreManagerHome.js"
 import AdminHome from "./components/DashboardHome.js"
+import Register from "./components/Register.js"
 
 const routes = [
     {
@@ -12,6 +12,9 @@ const routes = [
     },
     {
         path: '/login', component: Login, name: 'Login'
+    },
+    {
+        path: '/register', component: Register, name: 'Register'
     },
     {
         path: '/customers', component: Customers

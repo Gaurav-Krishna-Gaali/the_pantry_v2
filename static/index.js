@@ -3,7 +3,7 @@ import Navbar from "./Navbar.js"
 
 
 router.beforeEach((to, from, next) => {
-    if (to.name !== 'Login' && !localStorage.getItem('auth-token') ? true : false) {
+    if (to.name !== 'Login' && to.name !== 'Register' && !localStorage.getItem('auth-token') ? true : false) {
         next({ name: 'Login' })
     } else {
         next()

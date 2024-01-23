@@ -68,7 +68,22 @@ def Userlogin():
     
     else:
         return jsonify({'message': 'Invalid credentials'}), 400
-    
+
+@app.post('/create_user')
+def create_user():
+    data = request.get_json()
+    email = data.get('email')
+    if not email:
+        return jsonify({'message': 'email is required'}), 400
+    user = datastore.find_user(email=email)
+    if user:
+        return jsonify({'message': 'User already exists'}), 409
+    user = datastore.create_user(
+        email=data.get('email'),
+        password=data.get('password'),
+        roles=data.get('roles')
+    )
+    return jsonify({'message': 'User created successfully'}), 201
 
 @app.put('/update_product/<int:product_id>')
 @auth_required("token")
