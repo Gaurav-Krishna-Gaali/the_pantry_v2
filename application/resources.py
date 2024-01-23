@@ -1,7 +1,7 @@
 from flask_restful import Resource, Api, reqparse, marshal_with, fields
 from .models import Products, Category, db, CartItem, User
 from flask import jsonify 
-from flask_security import auth_required, roles_required, current_user
+from flask_security import auth_required, roles_required, current_user, roles_accepted
 from sqlalchemy import or_
 
 api = Api(prefix='/api')
@@ -60,7 +60,7 @@ class StoreProducts(Resource):
         return display_product, 200
     
     @auth_required("token")
-    @roles_required("storemanager")
+    @roles_accepted("storemanager", "admin")
     def post(self):
         args = prodparser.parse_args()
         products = Products(name= args.get('name'),quantity= args.get('quantity'), category_id = args.get('category_id'),price= args.get('price'), creater_id= current_user.id)
@@ -91,7 +91,7 @@ class StoreCategory(Resource):
         return categories, 200
     
     @auth_required("token")
-    @roles_required("storemanager")
+    @roles_accepted('storemanager', 'admin') 
     def post(self):
         args = parser.parse_args()
         category = Category(

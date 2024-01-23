@@ -1,5 +1,5 @@
 from flask import current_app as app, jsonify, request, render_template, flash
-from flask_security import auth_required, roles_required, current_user
+from flask_security import auth_required, roles_required, current_user, roles_accepted
 from .models import User, db, Products, Category, RolesUsers, Role, OrderItem, Orders, CartItem, User
 from .sec import datastore
 from werkzeug.security import check_password_hash
@@ -72,7 +72,7 @@ def Userlogin():
 
 @app.put('/update_product/<int:product_id>')
 @auth_required("token")
-@roles_required('storemanager') 
+@roles_accepted('storemanager', 'admin') 
 def update_product(product_id):
     product = Products.query.get_or_404(product_id)
     product.is_approved = False
@@ -90,7 +90,7 @@ def update_product(product_id):
 
 @app.put('/update_category/<int:category_id>')
 @auth_required("token")
-@roles_required('storemanager') 
+@roles_accepted('storemanager', 'admin') 
 def update_category(category_id):
     category = Category.query.get_or_404(category_id)
     category.is_approved = False
