@@ -252,6 +252,26 @@ def Checkout():
         flash('No Sufficient balance')
     return jsonify({'message': 'Order placed successfully!'}), 200
 
+@app.route('/search', methods=['GET'])
+def search():
+    # Get the search query from the URL parameters
+    search_query = request.args.get('q', '')
+
+    if not search_query:
+        # Handle the case where no search query is provided
+        return jsonify({'message': 'No search query provided'}), 400
+
+    # Perform the search based on the query
+    # For example, if you have Product and Category models:
+    product_results = Products.query.filter(Products.name.ilike(f"%{search_query}%")).all()
+    category_results = Category.query.filter(Category.name.ilike(f"%{search_query}%")).all()
+
+    # Convert search results to a format suitable for JSON response
+    serialized_products = [{'id': product.id, 'name': product.name, 'price': product.price} for product in product_results]
+    serialized_categories = [{'id': category.id, 'name': category.name} for category in category_results]
+
+    return jsonify({'products': serialized_products, 'categories': serialized_categories})
+
 @app.get('/allproducts')
 def test():
     allPro = Products.query.all()

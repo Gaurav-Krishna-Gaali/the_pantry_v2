@@ -18,11 +18,16 @@ export default {
             <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto justify-content-between w-100">
 
-                    <form class=" d-flex w-100" action="/search" method="POST">
-                        <input class="form-control me-sm-2" type="text" name="query"
-                            placeholder="Search for products or categories">
-                        <button class="btn btn-success my-2 my-sm-0" type="submit">Search</button>
-                    </form>
+                <form class="d-flex w-100" @submit.prevent="formProxy">
+                <input
+                  class="form-control me-sm-2"
+                  type="text"
+                  name="query"
+                  placeholder="Search for products or categories"
+                  v-model="searchQuery"
+                />
+                <button class="btn btn-success my-2 my-sm-0" @click="searchProducts" type="submit">Search</button>
+              </form>
 
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
@@ -159,6 +164,7 @@ export default {
             is_login: localStorage.getItem('auth-token'),
             cart_items: [],
             wallet: 0,
+            searchQuery: '',
         }
     },
 
@@ -193,7 +199,6 @@ export default {
             });
             const walletData = await walletResponse.json();
 
-            console.log(data, walletData);
             if (res.ok && walletResponse.ok) {
                 this.cart_items = data
                 this.wallet = walletData.wallet;
@@ -248,20 +253,31 @@ export default {
             // Call fetchcart when the component is created
             await this.fetchcart();
         },
+        async searchProducts() {
+            this.$router.push({ path: '/search', query: { q: this.searchQuery } });
+            console.log('searchQuery', this.searchQuery)
+        },
 
-        async mounted() {
+        async formProxy() {
+            console.log('searchQuery', this.searchQuery)
+        }
 
-            const walletResponse = await fetch('/api/wallet', {
-                headers: {
-                    'Authentication-Token': this.is_login
-                }
-            });
-            const walletData = await walletResponse.json();
-            if (walletResponse.ok) {
-                this.wallet = walletData.wallet;
+
+
+    },
+    async mounted() {
+        await this.fetchcart();
+
+        const walletResponse = await fetch('/api/wallet', {
+            headers: {
+                'Authentication-Token': this.is_login
             }
-            else {
-            }
+        });
+        const walletData = await walletResponse.json();
+        if (walletResponse.ok) {
+            this.wallet = walletData.wallet;
+        }
+        else {
         }
     }
 }

@@ -5,6 +5,7 @@ import ProductsForm from "./components/ProductsForm.js"
 import CategoriesForm from "./components/CategoriesForm.js"
 import AdminHome from "./components/DashboardHome.js"
 import Register from "./components/Register.js"
+import Shop from "./components/Shop.js"
 
 const routes = [
     {
@@ -35,6 +36,9 @@ const routes = [
 
     {
         path: '/demo', component: () => import('./components/Demo.js')
+    },
+    {
+        path: '/search', component: Shop
     },
 
 ]

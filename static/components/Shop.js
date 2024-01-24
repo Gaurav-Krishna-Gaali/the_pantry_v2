@@ -126,7 +126,26 @@ export default {
             } else {
                 // alert(data.message)
             }
-        }
+        },
+
+        // Search function
+        async searchProducts(query) {
+            console.log("in the search", query)
+            const res = await fetch(`/search?q=${query}`, {
+                headers: {
+                    'Authentication-Token': this.token,
+                },
+            });
+            const data = await res.json();
+
+            if (res.ok) {
+                this.products = data.products;
+                this.categories = data.categories;
+                // Handle other data as needed
+            } else {
+                alert(data.message);
+            }
+        },
     },
     async mounted() {
         const res = await fetch('/api/products', {
@@ -169,6 +188,14 @@ export default {
         }
         else {
             console.log(cart_data)
+        }
+
+        // Search Query
+        const searchQuery = this.$route.query.q;
+        console.log('searchQuery', searchQuery)
+        if (searchQuery) {
+            await this.searchProducts(searchQuery);
+        } else {
         }
     }
 }
