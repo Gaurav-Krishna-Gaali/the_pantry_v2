@@ -3,18 +3,19 @@ import Navbar from "./Navbar.js"
 
 
 router.beforeEach((to, from, next) => {
-    if (to.name !== 'Login' && !localStorage.getItem('auth-token') ? true : false) {
-        next({ name: 'Login' })
+    if ((to.name !== 'Login' && to.name !== 'Register') && !localStorage.getItem('auth-token')) {
+        next({ name: 'Login' });
     } else {
-        next()
+        next();
     }
-}) 
+});
+
 new Vue({
     el: '#app',
     template: `<div>
     <Navbar :key="has_changed"/>
-    <router-view class="m-3"/> </div>`,
-    router, 
+    <router-view /> </div>`,
+    router,
     components: {
         Navbar
     },

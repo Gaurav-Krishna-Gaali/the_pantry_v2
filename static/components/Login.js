@@ -8,37 +8,44 @@ export default {
         <label for="user-password" class="form-label">Email address</label>
         <input type="password" class="form-control" id="user-password" placeholder="Enter you Password" v-model="cred.password">
         <button class="btn btn-primary mt-2" @click="login">Login</button>
+        <button class="btn btn-primary mt-2" @click="registerRoute">Register</button>
     </div>
   </div>
     `,
-    data(){
+    data() {
         return {
-            cred:{
+            cred: {
                 email: null,
                 password: null,
             },
             error: null
         }
-    }, 
-    methods:{
-        async login(){
+    },
+    methods: {
+        async login() {
             console.log(this.cred)
             const res = await fetch('/user-login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
-                }, 
+                },
                 body: JSON.stringify(this.cred)
             })
             const data = await res.json()
-            if(res.ok){
+            if (res.ok) {
                 localStorage.setItem('auth-token', data.token)
                 localStorage.setItem('role', data.role)
-                this.$router.push({path: '/'})
+                this.$router.push({ path: '/' })
             }
-            else{
+            else {
                 this.error = data.message
             }
+            window.location.reload()
+
+        },
+
+        registerRoute() {
+            this.$router.push({ path: '/register' })
         }
     }
 }
