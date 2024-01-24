@@ -10,7 +10,7 @@ export default {
     template: `
         <div class="container">
         <div className=""></div>
-            <Dashboard v-if="userRole !== 'customer'"/>
+             <Dashboard v-if="userRole === 'admin' || 'storemanager'"/>
            <Shop  />
               </div>
     `,

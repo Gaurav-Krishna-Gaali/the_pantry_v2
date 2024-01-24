@@ -2,7 +2,7 @@ from flask import current_app as app, jsonify, request, render_template, flash
 from flask_security import auth_required, roles_required, current_user, roles_accepted
 from .models import User, db, Products, Category, RolesUsers, Role, OrderItem, Orders, CartItem, User
 from .sec import datastore
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 from flask_restful import marshal, fields
 
 @app.get('/')
@@ -64,25 +64,35 @@ def Userlogin():
         return jsonify({'message': 'User not found'}), 404
     
     if check_password_hash(user.password, data.get('password')):
+        print(f" ( 'token' : {user.get_auth_token()}, 'email': {user.email} , 'role': {user.roles[0].name }")
         return { "token" : user.get_auth_token(), "email": user.email , "role": user.roles[0].name }
     
     else:
+        print(f" ( 'token' : {user.get_auth_token()}, 'email': {user.email} , 'role': {user.roles[0].name }")
         return jsonify({'message': 'Invalid credentials'}), 400
 
 @app.post('/create_user')
-def create_user():
+def create_user_func():
     data = request.get_json()
+    password = data.get('password')
     email = data.get('email')
-    if not email:
-        return jsonify({'message': 'email is required'}), 400
+
+    if not email or not password:
+        return jsonify({'message': 'Email and password are required'}), 400
+
     user = datastore.find_user(email=email)
+    
     if user:
         return jsonify({'message': 'User already exists'}), 409
     user = datastore.create_user(
         email=data.get('email'),
-        password=data.get('password'),
-        roles=data.get('roles')
+        username = data.get('username'),
+        password=generate_password_hash(data.get('password')),
+        roles=[data.get('role')],
+        active=True if data.get('role') == 'customer' else False
+
     )
+    datastore.commit()
     return jsonify({'message': 'User created successfully'}), 201
 
 @app.put('/update_product/<int:product_id>')

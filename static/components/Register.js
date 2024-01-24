@@ -1,8 +1,6 @@
 export default {
     template: `
     
-
-
     
 <div class="container">
 <div class="card o-hidden border-0 shadow-lg my-5">
@@ -14,41 +12,42 @@ export default {
                 <div class="p-5">
                     <div class="text-center">
                         <h1 class="h4 text-gray-900 mb-4">Create an Account!</h1>
+                        <div class="text-danger"> {{error}} </div>
                     </div>
-                    <form class="user" method="post">
+                    <form class="user" @submit.prevent="loginRoute">
                         <div class="form-group row">
                             <div class="col-sm-12 mb-3 mb-sm-0">
-                            <input type="text" class="form-control form-control-user" id="exampleFirstName" placeholder="Enter your username">
+                            <input type="text" class="form-control form-control-user" id="exampleFirstName" placeholder="Enter your username" v-model="cred.username">
 
                             </div>
 
                         </div>
                         <div class="form-group">
-                            <input type="email" class="form-control form-control-user" id="exampleInputEmail" placeholder="Email Address">
+                            <input type="email" class="form-control form-control-user" id="exampleInputEmail" placeholder="Email Address" v-model="cred.email">
                         </div>
                         <div class="form-group row">
                             <div class="col-sm-6 mb-3 mb-sm-0">
 
                             <label for="exampleInputPassword">Password</label>
-                            <input type="password" class="form-control form-control-user" id="exampleInputPassword" placeholder="Password">
+                            <input type="password" class="form-control form-control-user" id="exampleInputPassword" placeholder="Password" v-model="cred.password">
 
                             </div>
                             <div class="col-sm-6">
                             
                             <label for="exampleRepeatPassword">Confirm Password</label>
-                            <input type="password" class="form-control form-control-user" id="exampleRepeatPassword" placeholder="Repeat Password">
+                            <input type="password" class="form-control form-control-user" id="exampleRepeatPassword" placeholder="Repeat Password" v-model="cred.confirmPassword">
 
                             </div>
                         </div>
                             <div className="text-center justify-content-center">
                                             <label class="form-check-label">
-                                    <input type="radio" v-model="cred.userType" value="customer"> Customer
+                                    <input type="radio" v-model="cred.role" value="customer"> Customer
                                 </label>
                                 <label class="form-check-label ml-3">
-                                    <input type="radio" v-model="cred.userType" value="storeManager"> Store Manager
+                                    <input type="radio" v-model="cred.role" value="storemanager"> Store Manager
                                 </label>
                             </div>
-                        <button type="submit" class="btn btn-primary btn-user btn-block">Register</button>
+                        <button @click="register" class="btn btn-primary btn-user btn-block">Register</button>
                         <hr>
                         <!-- <a href="index.html" class="btn btn-google btn-user btn-block">
                             <i class="fab fa-google fa-fw"></i> Register with Google
@@ -76,33 +75,58 @@ export default {
     data() {
         return {
             cred: {
+                username: '',
                 email: null,
                 password: null,
+                confirmPassword: '',
+                role: '',
             },
-            error: null
+            error: null,
         }
+    },
+    computed: {
+        passwordsMatch() {
+            return this.cred.password === this.cred.confirmPassword;
+        },
     },
     methods: {
-        async login() {
-            console.log(this.cred)
-            const res = await fetch('/user-login', {
+        async register() {
+            console.log('this.cred', this.cred)
+            if (!this.passwordsMatch) {
+                this.error = 'Passwords do not match.';
+                return;
+            }
+
+            const res = await fetch('/create_user', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(this.cred)
-            })
-            const data = await res.json()
+                body: JSON.stringify({
+                    username: this.cred.username,
+                    email: this.cred.email,
+                    password: this.cred.password,
+                    role: this.cred.role,
+                }),
+            });
+
+            const data = await res.json();
             if (res.ok) {
-                localStorage.setItem('auth-token', data.token)
-                localStorage.setItem('role', data.role)
-                this.$router.push({ path: '/' })
+                // Handle successful registration
+                console.log('Registration successful');
+                // localStorage.setItem('auth-token', data.token)
+                // localStorage.setItem('role', data.role)
+                // this.$router.push({ path: '/login' })
+            } else {
+                this.error = data.message;
             }
-            else {
-                this.error = data.message
-            }
+        },
+        loginRoute() {
+            this.$router.push({ path: '/login' })
+            window.location.reload()
         }
     },
+
     created() {
         // Create a new link element
         const linkElement = document.createElement('link');
