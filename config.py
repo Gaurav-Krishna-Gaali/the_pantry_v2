@@ -1,7 +1,8 @@
 class Config(object):
     DEBUG = False
     TESTING = False
-
+    CACHE_TYPE = "RedisCache"
+    CACHE_DEFAULT_TIMEOUT = 300
  
 
 class DevelopmentConfig(Config):
@@ -15,3 +16,6 @@ class DevelopmentConfig(Config):
     SMTP_SERVER = 'localhost'
     SMTP_PORT = 1025
     SENDER_EMAIL = '21f2000631@study.iitm.ac.in'
+    CACHE_REDIS_HOST = 'localhost'
+    CACHE_REDIS_PORT = 6379
+    CACHE_REDIS_DB = 3
