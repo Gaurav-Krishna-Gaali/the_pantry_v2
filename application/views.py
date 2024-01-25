@@ -4,6 +4,7 @@ from .models import User, db, Products, Category, RolesUsers, Role, OrderItem, O
 from .sec import datastore
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_restful import marshal, fields
+from .tasks import send_email
 
 @app.get('/')
 def home():
@@ -279,3 +280,7 @@ def test():
     print(f"products are {allPro}")
     return jsonify(marshal(allPro, customer_fields))
 
+@app.get('/say-hello')
+def say_hello_view():
+    res = send_email.delay()
+    return jsonify({"task-id": res.id})
