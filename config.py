@@ -12,3 +12,6 @@ class DevelopmentConfig(Config):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     WTF_CSRF_ENABLED = False
     SECURITY_TOKEN_AUTHENTICATION_HEADER = 'Authentication-Token'
+    SMTP_SERVER = 'localhost'
+    SMTP_PORT = 1025
+    SENDER_EMAIL = '21f2000631@study.iitm.ac.in'

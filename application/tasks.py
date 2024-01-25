@@ -32,3 +32,14 @@ def create_customer_csv():
     with open(filename, 'wb') as f:
         f.write(csv_output.data)
     return filename
+
+@shared_task(ignore_result=False)
+def daily_reminder(message):
+    # users = User.query.filter(User.roles.any(Role.name == 'admin')).all()
+    # for user in users:
+    #     with open('test.html', 'r') as f:
+    #         template = Template(f.read())
+    #         send_message(user.email, subject,
+    #                      template.render(email=user.email))
+    # return "OK"
+    return message
