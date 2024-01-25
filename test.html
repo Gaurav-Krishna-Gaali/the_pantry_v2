@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Summary</title>
+</head>
+
+<body>
+    <div class="offcanvas offcanvas-start">Hello {{user.username if user.username else user.email}}!!</div>
+
+    <h2>Orders Summary</h2>
+    {% if upcoming %}
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Order Date</th>
+                <th>Product Name</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total Amount</th>
+                <th>Delivery Addresst</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in upcoming %}
+            <tr>
+                <td>{{ order.order_id }}</td>
+                <td>{{ order.order_date }}</td>
+                <td>{{ order.product_name }}</td>
+                <td>{{ order.quantity }}</td>
+                <td>{{ order.product_price }}</td>
+                <td>{{ order.total_amount }}</td>
+                <td>{{ order.delivery_address }}</td>
+                <td>{{ "Delivered" if order.status else "Pending" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No upcoming orders.</p>
+    {% endif %}
+
+    <h2>Remaining wallet balance : {{user.wallet}}</h2>
+
+</body>
+
+</html>
