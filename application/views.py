@@ -1,9 +1,12 @@
-from flask import current_app as app, jsonify, request, render_template, flash
+from flask import current_app as app, jsonify, request, render_template, flash, send_file
 from flask_security import auth_required, roles_required, current_user, roles_accepted
 from .models import User, db, Products, Category, RolesUsers, Role, OrderItem, Orders, CartItem, User
 from .sec import datastore
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_restful import marshal, fields
+import flask_excel as excel
+from .tasks import create_shop_csv, create_customer_csv, create_shop_category_csv
+from celery.result import AsyncResult
 
 @app.get('/')
 def home():
@@ -279,3 +282,31 @@ def test():
     print(f"products are {allPro}")
     return jsonify(marshal(allPro, customer_fields))
 
+# @app.get('/say-hello')
+# def say_hello_view():
+#     res = send_email.delay()
+#     return jsonify({"task-id": res.id})
+
+@app.get('/download-csv')
+def download_csv():
+    task = create_shop_csv.delay()
+    return jsonify({"task-id": task.id})
+
+@app.get('/download-customer-csv')
+def download_customer_csv():
+    task = create_customer_csv.delay()
+    return jsonify({"task-id": task.id})
+
+@app.get('/download-category-csv')
+def download_category_csv():
+    task = create_shop_category_csv.delay()
+    return jsonify({"task-id": task.id})
+
+@app.get('/get-csv/<task_id>')
+def get_csv(task_id):
+    res = AsyncResult(task_id)
+    if res.ready():
+        filename = res.result
+        return send_file(filename, as_attachment=True)
+    else:
+        return jsonify({"message":'task pending'}), 202

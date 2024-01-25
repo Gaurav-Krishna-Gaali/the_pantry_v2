@@ -36,10 +36,11 @@ export default {
                         <div class="dropdown-menu">
                             <div v-if="is_login">
                                 <a class="dropdown-item nav-link">My Wallet : ₹ {{wallet}}</a>
-                                <a class="dropdown-item nav-link" data-bs-toggle="offcanvas" href="#offcanvasExample"
-                                    role="button" aria-controls="offcanvasExample">
+                                <button @click="downloadResource" class="dropdown-item nav-link" data-bs-toggle="offcanvas" href="#offcanvasExample"
+                                    role="button" aria-controls="offcanvasExample"> 
                                     My Orders
-                                </a>
+                                </button>
+                                <span v-if="isWaiting">Waiting..</span>
                                 <button class="dropdown-item" @click="logout">Logout</button>
                                 <button class="dropdown-item" @click="logout">Profile ({{role}})</button>
                             </div>
@@ -165,6 +166,7 @@ export default {
             cart_items: [],
             wallet: 0,
             searchQuery: '',
+            isWaiting: false
         }
     },
 
@@ -183,7 +185,21 @@ export default {
             this.$router.push({ path: '/login' })
         },
 
-
+        async downloadResource() {
+            this.isWaiting = true
+            const res = await fetch('/download-csv')
+            const data = await res.json()
+            if (res.ok) {
+                const taskId = data['task-id']
+                const intv = setInterval(async () => {
+                    const csv_res = await fetch(`/get-csv/${taskId}`)
+                    if (csv_res.ok) {
+                        clearInterval(intv)
+                        window.location.href = `/get-csv/${taskId}`
+                    }
+                }, 1000)
+            }
+        },
         async fetchcart() {
             const res = await fetch('/api/cart', {
                 headers: {

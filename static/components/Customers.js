@@ -7,6 +7,8 @@ export default {
         <div class="card bg-light ms-4 me-4 mb-4">
             <div class="card-header">
                 <i class="fa-solid fa-list fa-lg"></i> Customers in Store 
+                <button @click="downloadCustomerResource" class="btn btn-primary float-end">Export</button>
+                    <span v-if="isWaiting">Waiting..</span>
             <div class="card-body">
                 <p class="card-text">
                 <div class="table-responsive">
@@ -62,6 +64,7 @@ export default {
       role: localStorage.getItem('role'),
       token: localStorage.getItem('auth-token'),
       error: null,
+      isWaiting: false
     }
   },
   methods: {
@@ -92,7 +95,22 @@ export default {
       if (res.ok) {
         alert(data.message)
       }
-    }
+    },
+    async downloadCustomerResource() {
+      this.isWaiting = true
+      const res = await fetch('/download-customer-csv')
+      const data = await res.json()
+      if (res.ok) {
+        const taskId = data['task-id']
+        const intv = setInterval(async () => {
+          const csv_res = await fetch(`/get-csv/${taskId}`)
+          if (csv_res.ok) {
+            clearInterval(intv)
+            window.location.href = `/get-csv/${taskId}`
+          }
+        }, 1000)
+      }
+    },
   },
   async mounted() {
     const res = await fetch('/customers', {
