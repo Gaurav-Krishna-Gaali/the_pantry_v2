@@ -9,6 +9,8 @@ export default {
                 <div class="card-header">
                     <i class="fa-solid fa-list fa-lg"></i> Products in Store
                     <router-link to="/add-products" class="btn btn-primary float-end">Add</router-link>
+                    <button @click="downloadResource" class="btn btn-primary float-end">Export</button>
+                    <span v-if="isWaiting">Waiting..</span>
                     
                 </div>
                 <div class="card-body">
@@ -70,7 +72,11 @@ export default {
             <div class="card bg-light ms-4 me-4 mb-4">
                 <div class="card-header">
                     <i class="fa-solid fa-list fa-lg"></i> Categories in Store
+
+                
                     <router-link to="/add-categories" class="btn btn-primary float-end">Add</router-link>
+                    <button @click="downloadCategoryResource" class="btn btn-primary float-end">Export</button>
+                    <span v-if="isWaiting">Waiting..</span>
 
                     <div class="card-body">
                         <p class="card-text">
@@ -225,6 +231,7 @@ export default {
             userRole: localStorage.getItem('role'),
             products: [],
             categories: [],
+            isWaiting: false,
             model_product: null,
             model_category: null,
             editedProduct: {
@@ -340,6 +347,36 @@ export default {
                 console.log(result.message);
             } catch (error) {
                 throw new Error(error.message);
+            }
+        },
+        async downloadResource() {
+            this.isWaiting = true
+            const res = await fetch('/download-csv')
+            const data = await res.json()
+            if (res.ok) {
+                const taskId = data['task-id']
+                const intv = setInterval(async () => {
+                    const csv_res = await fetch(`/get-csv/${taskId}`)
+                    if (csv_res.ok) {
+                        clearInterval(intv)
+                        window.location.href = `/get-csv/${taskId}`
+                    }
+                }, 1000)
+            }
+        },
+        async downloadCategoryResource() {
+            this.isWaiting = true
+            const res = await fetch('/download-category-csv')
+            const data = await res.json()
+            if (res.ok) {
+                const taskId = data['task-id']
+                const intv = setInterval(async () => {
+                    const csv_res = await fetch(`/get-csv/${taskId}`)
+                    if (csv_res.ok) {
+                        clearInterval(intv)
+                        window.location.href = `/get-csv/${taskId}`
+                    }
+                }, 1000)
             }
         },
     },

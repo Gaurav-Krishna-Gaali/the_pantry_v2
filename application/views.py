@@ -5,7 +5,7 @@ from .sec import datastore
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_restful import marshal, fields
 import flask_excel as excel
-from .tasks import create_shop_csv
+from .tasks import create_shop_csv, create_customer_csv, create_shop_category_csv
 from celery.result import AsyncResult
 
 @app.get('/')
@@ -289,10 +289,18 @@ def test():
 
 @app.get('/download-csv')
 def download_csv():
-
     task = create_shop_csv.delay()
     return jsonify({"task-id": task.id})
 
+@app.get('/download-customer-csv')
+def download_customer_csv():
+    task = create_customer_csv.delay()
+    return jsonify({"task-id": task.id})
+
+@app.get('/download-category-csv')
+def download_category_csv():
+    task = create_shop_category_csv.delay()
+    return jsonify({"task-id": task.id})
 
 @app.get('/get-csv/<task_id>')
 def get_csv(task_id):
