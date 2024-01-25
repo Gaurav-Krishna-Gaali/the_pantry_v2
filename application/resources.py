@@ -3,6 +3,7 @@ from .models import Products, Category, db, CartItem, User
 from flask import jsonify 
 from flask_security import auth_required, roles_required, current_user, roles_accepted
 from sqlalchemy import or_
+from .instances import cache
 
 api = Api(prefix='/api')
 
@@ -44,6 +45,7 @@ products_fields = {
 class StoreProducts(Resource):
     @marshal_with(products_fields)
     @auth_required("token")
+    @cache.cached(timeout=60)
     def get(self):
         if  "storemanager"  in current_user.roles:
             # display_product = Products.query.all()
@@ -80,6 +82,7 @@ class StoreCategory(Resource):
     }
 
     @marshal_with(category_fields)
+    @cache.cached(timeout=60)
     @auth_required("token")
     def get(self):
         if  "admin"  in current_user.roles:
