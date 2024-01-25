@@ -5,12 +5,14 @@ from application.resources import api
 from flask_security import Security, SQLAlchemyUserDatastore
 from application.sec import datastore
 from application.worker import celery_init_app
+import flask_excel as excel
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object(DevelopmentConfig)
     db.init_app(app)
     api.init_app(app)
+    excel.init_excel(app)
     app.Security = Security(app, datastore)
     with app.app_context():
         import application.views
