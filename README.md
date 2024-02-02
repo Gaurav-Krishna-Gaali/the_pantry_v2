@@ -49,8 +49,17 @@ To utilize advanced features, such as background tasks and caching, follow these
 3. Ensure Redis server is running:
 
     ```bash
-    redis-server
+    sudo service redis-server start
     ```
+    
+4. Start MailHog SMTP Server:
+
+    ```bash
+    ~/go/bin/MailHog
+    ```
+    
+5. Open Redisinsight to see the cache
+
 
 ## Contributing
 
